@@ -1,0 +1,110 @@
+{% load static %}
+<aside class="main-sidebar" style="position: fixed">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        <!-- Sidebar user panel -->
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="{{ user.profile.avatar }}" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+                <p>{{ user.profile.display_name }}</p>
+                <a><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        <!-- search form -->
+
+        <!-- /.search form -->
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <ul class="sidebar-menu" data-widget="tree">
+            <li class="header">NAVIGATION</li>
+
+            <li class="header">PARTNER</li>
+            <li id="nav-Su" class="treeview">
+                <a href="#">
+                    <i class="fa fa-user "></i> <span>Supplier</span>
+                    <span class="pull-right-container">
+                                  <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li id="nav-Su-SuL"><a href="{% url 'QuanLyNhaSach:suppliers' %}"><i class="fa fa-list"></i>
+                        Supplier
+                        List</a></li>
+                    <li id="nav-Su-ASu"><a href="{% url 'QuanLyNhaSach:suppliers-add' %}"><i
+                            class="fa fa-user-plus"></i> Add Supplier</a></li>
+                </ul>
+            </li>
+            <li id="nav-C" class="treeview">
+                <a href="#">
+                    <i class="fa fa-user-circle "></i> <span>Customer</span>
+                    <span class="pull-right-container">
+                                  <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li id="nav-C-CL"><a href="{% url 'QuanLyNhaSach:customers' %}"><i class="fa fa-list"></i> Customer
+                        List</a></li>
+                    <li id="nav-C-AC"><a href="{% url 'QuanLyNhaSach:customers-add' %}"><i
+                            class="fa fa-user-plus"></i> Add Customer</a></li>
+                    <li id="nav-C-CTL"><a href="{% url 'QuanLyNhaSach:customers-type' %}"><i class="fa fa-list"></i>
+                        Customer Type List</a></li>
+
+                    <li id="nav-C-ACT"><a href="{% url 'QuanLyNhaSach:customers-type-add' %}"><i
+                            class="fa fa-plus-circle"></i> Add Customer Type</a></li>
+                </ul>
+            </li>
+            <li class="header">MERCHANDISE</li>
+            <li id="nav-B" class="treeview">
+                <a href="#">
+                    <i class="fa fa-book"></i> <span>Books</span>
+                    <span class="pull-right-container">
+                                  <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li id="nav-B-BL"><a href="{% url 'QuanLyNhaSach:books' %}"><i class="fa fa-list"></i> Book
+                        List</a></li>
+                    <li id="nav-B-AB"><a href="{% url 'QuanLyNhaSach:books-add' %}"><i
+                            class="fa fa-plus-circle"></i> Add Book</a></li>
+                    <li id="nav-B-BTL"><a href="{% url 'QuanLyNhaSach:books-type' %}"><i class="fa fa-list"></i>
+                        Book Type List</a></li>
+
+                    <li id="nav-B-ABT"><a href="{% url 'QuanLyNhaSach:books-type-add' %}"><i
+                            class="fa fa-plus-circle"></i> Add Book Type</a></li>
+                </ul>
+            </li>
+            <li id="nav-S" class="treeview">
+                <a href="#">
+                    <i class="fa fa-pencil-square"></i> <span>Stationery</span>
+                    <span class="pull-right-container">
+                                  <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li id="nav-S-SL"><a href="{% url 'QuanLyNhaSach:stationeries' %}"><i class="fa fa-list"></i>
+                        Stationery
+                        List</a></li>
+                    <li id="nav-S-AS"><a href="{% url 'QuanLyNhaSach:stationeries-add' %}"><i
+                            class="fa fa-plus-circle"></i> Add Stationery</a></li>
+                    <li id="nav-S-STL"><a href="{% url 'QuanLyNhaSach:stationeries-type' %}"><i class="fa fa-list"></i>
+                        Stationery Type List</a></li>
+
+                    <li id="nav-S-AST"><a href="{% url 'QuanLyNhaSach:stationeries-type-add' %}"><i
+                            class="fa fa-plus-circle"></i> Add Stationery Type</a></li>
+                </ul>
+            </li>
+            <li id="nav-Pr">
+                <a href="{% url 'QuanLyNhaSach:logout' %}">
+                    <i class="fa fa-sign-out"></i>
+                    <span>Log out</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+    <!-- /.sidebar -->
+</aside>
+<script>
+
+
+</script>

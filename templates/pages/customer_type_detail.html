@@ -1,0 +1,169 @@
+{% extends 'layout/main.html' %}
+{% load static %}
+
+{% block header %}
+
+{% endblock %}
+{% block section %}
+    <a href="{% url 'QuanLyNhaSach:customers-type' %}">Customer Type List</a> <i class="fa fa-fw  fa-angle-right"></i>
+    {{ action }}
+{% endblock %}
+{% block content %}
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h2 class="box-title">{{ action }} Type</h2>
+
+                        <hr>
+                    </div>
+
+                    <div class="box-body">
+                        <form class="form-horizontal" method="POST" action="{{ url }}">
+                            {% csrf_token %}
+
+                            <div class="form-group">
+                                <label for="inputUser3" class="col-md-1 control-label">Type</label>
+                                <div class="col-md-11">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+                                        <input name="type" type="text" class="form-control"
+                                               placeholder="Type name" required value="{{ type.type }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputUser3" class="col-md-1 control-label">Min</label>
+                                <div class="col-md-11">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-angle-left"></i></span>
+
+                                        <input name="min" type="number" class="form-control rk-filter"
+                                               placeholder="Min value" value="{{ type.min }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputUser3" class="col-md-1 control-label">Max</label>
+                                <div class="col-md-11">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-angle-right"></i></span>
+
+                                        <input name="max" type="number" class="form-control"
+                                               placeholder="Max value" value="{{ type.max }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputUser3" class="col-md-1 control-label">Descriptions</label>
+                                <div class="col-md-11">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+
+                                        <input name="descriptions" type="text" class="form-control rk-filter"
+                                               placeholder="Descriptions" value="{{ type.descriptions }}">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-12">
+
+                                <button type="submit" style="float: right; margin-left: 10px;"
+                                        class="btn btn-primary">
+                                    {{ btn_content }}
+                                </button>
+                                {% if customer %}
+                                    <button type="button" id="delete" style="float: right;"
+                                            class="btn btn-danger">
+                                        Delete
+                                    </button>
+                                {% endif %}
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+
+{% block script %}
+    <script src="{% static "bower_components/datatables.net/js/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js" %}"></script>
+    <script>
+        {% if customer %}
+            var method = "PUT"
+            var action = "Update"
+        {% else %}
+            var method = "POST"
+            var action = "Create"
+        {% endif %}
+        $(function () {
+            {% if customer %}
+                $("#delete").click(function () {
+                    if (confirm("Do you want to delete this type?")) {
+                        let form = $("form");
+                        let url = form.attr('action');
+                        $.ajax({
+                            type: "DELETE",
+                            url: url,
+                            headers: {
+                                "X-CSRFToken": "{{csrf_token}}"
+                            },
+                            success: function (data) {
+                                window.location.href = "{% url 'QuanLyNhaSach:customers-type' %}";
+                            }
+                        });
+                    }
+
+                })
+            {% endif %}
+            $("form").submit(function (e) {
+
+
+                var form = $(this);
+                var url = form.attr('action');
+
+                $.ajax({
+                    type: method,
+                    url: url,
+                    data: form.serialize(), // serializes the form's elements.
+                    headers: {
+                        "X-CSRFToken": "{{csrf_token}}"
+                    },
+                    success: function (data) {
+
+                        $.notify({
+                            // options
+                            message: '<span style="font-size:15px;">' + action + ' type <strong style="color:green;">' + data.type + ' </strong> success</span>'
+                        }, {
+                            // settings
+                            type: 'info'
+                        });
+                    }, error: function (xhr, ajaxOptions, thrownError) {
+                        $("#submit").prop('disabled', false);
+                        $.notify({
+                            // options
+                            message: '<span> Erorr </span><br><span style="font-size:15px;">' + xhr.responseText + ' </span>'
+                        }, {
+                            // settings
+                            type: 'error'
+                        });
+
+
+                    }
+                });
+
+                e.preventDefault(); // avoid to execute the actual submit of the form.
+            });
+        })
+    </script>
+{% endblock %}

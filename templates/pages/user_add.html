@@ -1,0 +1,99 @@
+{% extends 'layout/main.html' %}
+{% load static %}
+
+{% block header %}
+    <style>
+
+
+    </style>
+{% endblock %}
+{% block section %}
+    <a href="{% url 'QuanLyNhaSach:users' %}">User List </a> <i class="fa fa-fw  fa-angle-right"></i> Add
+{% endblock %}
+{% block content %}
+    <form method="POST">
+        {% csrf_token %}
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h3 class="box-title">Create new</h3>
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <p class="text-danger">{{ message }}</p>
+                                {% endfor %}
+
+                            {% endif %}
+                        </div>
+
+
+                        <div class="box-body">
+
+
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+
+                                <div class="col-sm-10">
+                                    <div class="input-group" style="margin-bottom: 20px">
+                                        <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+
+                                        <input name="email" type="email" class="form-control" id="inputEmail3"
+                                               placeholder="Email" value="{{ user_selected.email }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="first-name" class="col-sm-2 control-label">First Name</label>
+
+                                <div class="col-sm-10">
+                                    <div class="input-group" style="margin-bottom: 20px">
+                                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+                                        <input name="first_name" type="text" class="form-control" id="first-name"
+                                               placeholder="First Name" value="{{ user_selected.first_name }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="last-name" class="col-sm-2 control-label">Last Name</label>
+
+                                <div class="col-sm-10">
+                                    <div class="input-group" style="margin-bottom: 20px">
+                                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+                                        <input name="last_name" type="text" class="form-control" id="last-name"
+                                               placeholder="Last Name" value="{{ user_selected.last_name }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-11">
+
+                            </div>
+                            <div class="col-md-1">
+
+                                <button id="save" style="float: right;"
+                                        class="btn btn-primary">
+                                    Continue
+                                </button>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </form>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static "bower_components/datatables.net/js/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js" %}"></script>
+    <script>
+
+
+    </script>
+{% endblock %}

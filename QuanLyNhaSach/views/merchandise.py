@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework.viewsets import ModelViewSet
 from QuanLyNhaSach.serializers.mechandise import MerchandiseTypeSerializer, MerchandiseSerializer
 from QuanLyNhaSach.models.merchandise import Merchandise, MerchandiseType
+from QuanLyNhaSach.models.stock_transfer_in import StockTransferInDetail, StockTransferIn
 from QuanLyNhaSach.views.base import BaseITSAdminView
 
 
@@ -30,7 +31,8 @@ class BookUpdateView(BaseITSAdminView):
     def get(self, request, id, **params):
         book = get_object_or_404(Merchandise, pk=id)
         self.extra.update({"book": book,
-                           "url": '/api/books/{}/'.format(id)})
+                           "url": '/api/books/{}/'.format(id),
+                           "note_in_list": StockTransferInDetail.objects.select_related('inside').filter(unit__id=id)})
         params.update(self.extra)
         return render(request, self.template_name, params)
 
@@ -85,9 +87,10 @@ class StationeryUpdateView(BaseITSAdminView):
                               book_type=MerchandiseType.objects.filter(type_for=0).all())
 
     def get(self, request, id, **params):
-        book = get_object_or_404(Merchandise, pk=id)
-        self.extra.update({"book": book,
-                           "url": '/api/stationeries/{}/'.format(id)})
+        stationery = get_object_or_404(Merchandise, pk=id)
+        self.extra.update({"stationery": stationery,
+                           "url": '/api/stationeries/{}/'.format(id),
+                           "note_in_list": StockTransferInDetail.objects.select_related('inside').filter(unit__id=id)})
         params.update(self.extra)
         return render(request, self.template_name, params)
 

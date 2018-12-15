@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.urls import reverse, path
 from QuanLyNhaSach.views import customer
-from QuanLyNhaSach.views import merchandise, supplier
+from QuanLyNhaSach.views import merchandise, supplier, promotion, stock_transfer_out, stock_transfer_in, user, group
 from django.contrib.auth import views
 
 app_name = 'QuanLyNhaSach'
@@ -42,5 +42,21 @@ urlpatterns = [
     path('suppliers/', supplier.SupplierListView.as_view(), name='suppliers'),
     path('suppliers/add/', supplier.SupplierAddView.as_view(), name='suppliers-add'),
     path('suppliers/<int:id>/', supplier.SupplierUpdateView.as_view(), name='suppliers-update'),
+
+    path('promotions/', promotion.PromotionListView.as_view(), name='promotions'),
+
+    path('delivery-note/add/', stock_transfer_in.StockTransferInAddView.as_view(), name='stock-transfer-in-add'),
+    path('delivery-note/<int:id>/', stock_transfer_in.StockTransferInDetailView.as_view(),
+         name='stock-transfer-in-detail'),
+    path('delivery-note/', stock_transfer_in.StockTransferInListView.as_view(),
+         name='stock-transfer-in'),
+
+    path('profile/', user.ProfileView.as_view(), name='profile'),
+    path('groups/', group.GroupListView.as_view(), name='groups'),
+    path('groups/add/', group.GroupAddView.as_view(), name='groups_add'),
+    path('groups/<int:group_id>/', group.GroupEditView.as_view(), name='groups_detail'),
+    path('users/', user.UserListView.as_view(), name='users'),
+    path('users/<int:user_id>/', user.UserEditView.as_view(), name='users_detail'),
+    path('users/add/', user.UserAddView.as_view(), name='users_add'),
 
 ]

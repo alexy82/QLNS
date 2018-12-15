@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from QuanLyNhaSach.models.customer import Customer
-from QuanLyNhaSach.models.store import Store
 from QuanLyNhaSach.models.merchandise import Merchandise
 from QuanLyNhaSach.models.promotion import Promotion
 
@@ -14,7 +13,6 @@ class StockTransferOut(models.Model):
     created_at = models.DateTimeField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='stock_transfer_out_list')
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='stock_transfer_out_list')
-    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='stock_transfer_out_list')
     promotion = models.ForeignKey(Promotion, on_delete=models.CASCADE, related_name='stock_transfer_out_list',
                                   null=True, blank=True)
 

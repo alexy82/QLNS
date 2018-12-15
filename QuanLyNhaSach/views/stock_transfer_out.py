@@ -2,10 +2,52 @@ from rest_framework.viewsets import ModelViewSet
 from QuanLyNhaSach.serializers.stock_transfer_out import StockTransferOutDetailSerializer, StockTransferOutSerializer
 from QuanLyNhaSach.models.stock_transfer_out import StockTransferOutDetail, StockTransferOut
 from datetime import datetime
+import json
+from django.contrib.auth.models import User
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.response import Response
+from rest_framework.status import HTTP_201_CREATED
+from django.shortcuts import get_object_or_404, render
+from datetime import datetime
+from QuanLyNhaSach.serializers.stock_transfer_in import StockTransferInDetailSerializer, StockTransferInSerializer
+from QuanLyNhaSach.models.stock_transfer_in import StockTransferInDetail, StockTransferIn
+from QuanLyNhaSach.models.merchandise import Merchandise
+from QuanLyNhaSach.models.supplier import Supplier
+from QuanLyNhaSach.views.base import BaseITSAdminView
+from QLNS.middleware import get_current_user
 from QuanLyNhaSach.models.merchandise import Merchandise
 from QuanLyNhaSach.models.promotion import Promotion
+from QuanLyNhaSach.views.base import BaseITSAdminView
 
-from QuanLyNhaSach.business_layer.merchandise import MerchandiseHelper
+
+class StockTransferOutListView(BaseITSAdminView):
+    def __init__(self):
+        super(StockTransferOutListView, self).__init__()
+        self.template_name = 'pages/stock_transfer_out.html'
+        self.set_context_data(supplier_list=Supplier.objects.all(), user_list=User.objects.all())
+
+
+class StockTransferOutAddView(BaseITSAdminView):
+    def __init__(self):
+        super(StockTransferOutAddView, self).__init__()
+        self.template_name = 'pages/stock_transfer_out_detail.html'
+        self.set_context_data(books=Merchandise.objects.filter(merchandise_type=1),
+                              stationeries=Merchandise.objects.filter(merchandise_type=0),
+                              suppliers=Supplier.objects.all())
+
+
+class StockTransferOutDetailView(BaseITSAdminView):
+    def __init__(self):
+        super(StockTransferOutDetailView, self).__init__()
+        self.template_name = 'pages/stock_transfer_out_detail.html'
+
+    def get(self, request, id, **params):
+        note = get_object_or_404(StockTransferOut, pk=id)
+        self.extra.update({"note": note,
+                           "note_details": StockTransferOutDetail.objects.filter(inside=note)})
+        params.update(self.extra)
+        return render(request, self.template_name, params)
+
 
 """
 Phiếu xuất kho:
@@ -22,30 +64,44 @@ class StockTransferOutViewSet(ModelViewSet):
     queryset = StockTransferOut.objects.all()
     serializer_class = StockTransferOutSerializer
 
+    def create(self, request, *args, **kwargs):
+        data = request.POST.dict()
+        data['created_by'] = get_current_user().id
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=HTTP_201_CREATED, headers=headers)
+
     def perform_create(self, serializer):
-        if serializer.is_valid():
-            promotion = None
-            if 'promotion_code' in self.request.POST:
-                promotion_code = self.request.POST['promotion_code']
-                if promotion_code is not None and promotion_code != "":
-                    promotion = Promotion.objects.get(code=promotion_code)
-                    promotion.is_used = True
-                    promotion.save()
-            serializer.save(created_at=datetime.now(), promotion=promotion)
+        serializer.save(created_at=datetime.now())
 
 
 class StockTransferOutDetailViewSet(ModelViewSet):
     queryset = StockTransferOutDetail.objects.all()
     serializer_class = StockTransferOutDetailSerializer
 
-    def perform_create(self, serializer):
-        if serializer.is_valid():
-            id_unit = self.request.POST['unit']
+    def create(self, request, *args, **kwargs):
+        data = request.POST.get("items")
+        data = json.loads(data)
+        for item in data:
+            id_unit = item['unit']
             unit = Merchandise.objects.get(pk=id_unit)
             price = unit.price
-            unit.available_count -= int(self.request.POST['count'])
+            unit.available_count -= item['count']
             unit.save()
-            serializer.save(price=price)
+            item['price'] = price
+
+        many = isinstance(data, list)
+        serializer = self.get_serializer(data=data, many=many)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save()
 
     def perform_update(self, serializer):
         if serializer.is_valid():

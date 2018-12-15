@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework.viewsets import ModelViewSet
 from QuanLyNhaSach.serializers.supplier import SupplierSerializer
 from QuanLyNhaSach.models.supplier import Supplier
+from QuanLyNhaSach.models.stock_transfer_in import StockTransferIn
 from QuanLyNhaSach.views.base import BaseITSAdminView
 
 
@@ -28,7 +29,8 @@ class SupplierUpdateView(BaseITSAdminView):
     def get(self, request, id, **params):
         supplier = get_object_or_404(Supplier, pk=id)
         self.extra.update({"supplier": supplier,
-                           "url": '/api/suppliers/{}/'.format(id)})
+                           "url": '/api/suppliers/{}/'.format(id),
+                           "note_in_list": StockTransferIn.objects.filter(supplier__id=id)})
         params.update(self.extra)
         return render(request, self.template_name, params)
 

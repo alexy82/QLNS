@@ -5,9 +5,8 @@ from QuanLyNhaSach.models.promotion import Promotion
 
 class PromotionSerializer(ModelSerializer):
     id = fields.CharField(required=False)
-    code = fields.CharField(read_only=True)
+    is_used = fields.BooleanField(read_only=True)
 
     class Meta:
         model = Promotion
         fields = '__all__'
-

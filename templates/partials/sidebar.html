@@ -1,5 +1,5 @@
 {% load static %}
-<aside class="main-sidebar" style="position: fixed">
+<aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
         <!-- Sidebar user panel -->
@@ -17,9 +17,61 @@
         <!-- /.search form -->
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu" data-widget="tree">
-            <li class="header">NAVIGATION</li>
+            <li class="header">MANAGE</li>
+            <li id="nav-GDN" class="treeview">
+                <a href="#">
+                    <i class="fa fa-users"></i> <span>User Manage</span>
+                    <span class="pull-right-container">
+                                  <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li id="nav-GDN-GDNL"><a href="{% url 'QuanLyNhaSach:users' %}"><i
+                            class="fa fa-list"></i>
+                        User List</a></li>
+                    <li id="nav-GDN-AGDN"><a href="{% url 'QuanLyNhaSach:users_add' %}"><i
+                            class="fa fa-plus-circle"></i> Add User</a></li>
 
-            <li class="header">PARTNER</li>
+                </ul>
+            </li>
+            <li id="nav-GDN" class="treeview">
+                <a href="#">
+                    <i class="fa fa-stop"></i> <span>Group Permissions</span>
+                    <span class="pull-right-container">
+                                  <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li id="nav-GDN-GDNL"><a href="{% url 'QuanLyNhaSach:groups' %}"><i
+                            class="fa fa-list"></i>
+                        Group List</a></li>
+                    <li id="nav-GDN-AGDN"><a href="{% url 'QuanLyNhaSach:groups_add' %}"><i
+                            class="fa fa-plus-circle"></i> Add Group</a></li>
+
+                </ul>
+            </li>
+            <li class="header">FEATURE</li>
+            <li id="nav-P">
+                <a href="{% url 'QuanLyNhaSach:promotions' %}">
+                    <i class="fa fa-ticket"></i> <span>Promotion manager</span>
+                </a>
+            </li>
+            <li id="nav-GDN" class="treeview">
+                <a href="#">
+                    <i class="fa fa-sticky-note"></i> <span>Goods Delivery Note</span>
+                    <span class="pull-right-container">
+                                  <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li id="nav-GDN-GDNL"><a href="{% url 'QuanLyNhaSach:stock-transfer-in' %}"><i
+                            class="fa fa-list"></i>
+                        Note List</a></li>
+                    <li id="nav-GDN-AGDN"><a href="{% url 'QuanLyNhaSach:stock-transfer-in-add' %}"><i
+                            class="fa fa-plus-circle"></i> Add Note</a></li>
+
+                </ul>
+            </li>
             <li id="nav-Su" class="treeview">
                 <a href="#">
                     <i class="fa fa-user "></i> <span>Supplier</span>
@@ -54,7 +106,6 @@
                             class="fa fa-plus-circle"></i> Add Customer Type</a></li>
                 </ul>
             </li>
-            <li class="header">MERCHANDISE</li>
             <li id="nav-B" class="treeview">
                 <a href="#">
                     <i class="fa fa-book"></i> <span>Books</span>
@@ -94,6 +145,14 @@
                             class="fa fa-plus-circle"></i> Add Stationery Type</a></li>
                 </ul>
             </li>
+            <li class="header">MY PROFILE</li>
+            <li id="nav-Pr">
+                <a href="{% url 'QuanLyNhaSach:profile' %}">
+                    <i class="fa fa-info-circle"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+
             <li id="nav-Pr">
                 <a href="{% url 'QuanLyNhaSach:logout' %}">
                     <i class="fa fa-sign-out"></i>

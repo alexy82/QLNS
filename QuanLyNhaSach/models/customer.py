@@ -8,7 +8,7 @@ class CustomerType(models.Model):
     id = models.AutoField(primary_key=True)
     min = models.IntegerField(default=0, unique=True)
     max = models.IntegerField(default=0, unique=True)
-    type = models.CharField(max_length=64)
+    type = models.CharField(max_length=64,unique=True)
     descriptions = models.CharField(max_length=256)
 
     class Meta:

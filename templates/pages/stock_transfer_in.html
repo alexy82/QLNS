@@ -21,7 +21,7 @@
     </style>
 {% endblock %}
 {% block section %}
-    Stationery List
+    Goods Delivery Note List
 {% endblock %}
 {% block content %}
     <section class="content">
@@ -38,37 +38,41 @@
                     </div>
                     <div class="box-body">
                         <div class="row">
-                            <div class="col-lg-3">
+                            <div class="col-lg-2">
                                 <div class="input-group col-md-12">
                                     <label>ID</label>
                                     <input type="number" class="form-control id-filter" placeholder="ID">
                                 </div>
                             </div>
-                            <div class="col-lg-3">
+                            <div class="col-lg-2">
                                 <div class="input-group col-md-12">
-                                    <label>Name</label>
-                                    <input type="text" class="form-control name-filter" placeholder="Name">
+                                    <label>Created at</label>
+                                    <input type="date" class="form-control created_at-filter" placeholder="Name">
                                 </div>
                             </div>
-                            <div class="col-lg-3">
-                                <div class="form-group">
-                                    <label>Type</label>
-                                    <select class="form-control type-select" style="width: 100%;">
+                            <div class="col-lg-4">
+                                <div class="input-group col-md-12">
+                                    <label>Created by</label>
+                                    <select class="form-control user-select" style="width: 100%;">
                                         <option selected="selected" value="">ALL</option>
-                                        {% for type in stationery_type %}
-                                            <option value="{{ type.id }}">{{ type.type_name }}</option>
+                                        {% for user in user_list %}
+                                            <option value="{{ user.id }}">{{ user.profile.display_name }}-{{ user.email }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="input-group col-md-12">
+                                    <label>Supplier</label>
+                                    <select class="form-control supplier-select" style="width: 100%;">
+                                        <option selected="selected" value="">ALL</option>
+                                        {% for supplier in supplier_list %}
+                                            <option value={{ supplier.id }}>{{ supplier.name }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
 
-
-                            <div class="col-lg-3">
-                                <div class="input-group col-md-12">
-                                    <label>Brand</label>
-                                    <input type="text" class="form-control brand-filter" placeholder="Brand">
-                                </div>
-                            </div>
 
                         </div>
                         <div class="row">
@@ -87,8 +91,8 @@
                     <div class="box-header">
                         <h3 class="box-title">Data</h3>
                         <div class="box-tools pull-right">
-                            <a type="button" class="btn btn-box-tool" title="Add stationery"
-                               href="{% url 'QuanLyNhaSach:stationeries-add' %}"><i
+                            <a type="button" class="btn btn-box-tool" title="Add type"
+                               href="{% url 'QuanLyNhaSach:stock-transfer-in-add' %}"><i
                                     class="fa fa-plus text-info" style="font-size: 20px"></i>
                             </a>
                         </div>
@@ -100,13 +104,17 @@
                         <table id="example1" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th style="width: 10%">ID</th>
-                                <th style="width: 25%">Name</th>
-                                <th style="width: 15%">Type</th>
-                                <th style="width: 15%">Available Count</th>
-                                <th style="width: 15%">Price</th>
-                                <th style="width: 20%">Brand</th>
+                                <th style="width: 5%">ID</th>
+                                <th style="width: 15%">Created at</th>
+                                <th style="width: 20%">Created by</th>
+                                <th style="width: 10%">Supplier</th>
+                                <th style="width: 13%">Total</th>
+                                <th style="width: 13%">Paid</th>
+                                <th style="width: 13%">Dept</th>
+                                <th style="width: 11%"></th>
                                 <th hidden="hidden"></th>
+                                <th hidden="hidden"></th>
+
 
                             </tr>
                             </thead>
@@ -115,11 +123,14 @@
                             <tfoot>
                             <tr>
                                 <th style="width: 10%">ID</th>
-                                <th style="width: 25%">Name</th>
-                                <th style="width: 15%">Type</th>
-                                <th style="width: 15%">Available Count</th>
-                                <th style="width: 15%">Price</th>
-                                <th style="width: 20%">Brand</th>
+                                <th style="width: 10%">Created at</th>
+                                <th style="width: 20%">Created by</th>
+                                <th style="width: 10%">Supplier</th>
+                                <th style="width: 13%">Total</th>
+                                <th style="width: 13%">Paid</th>
+                                <th style="width: 13%">Dept</th>
+                                <th style="width: 10%"></th>
+                                <th hidden="hidden"></th>
                                 <th hidden="hidden"></th>
 
                             </tr>
@@ -143,35 +154,59 @@
         $(document).ready(function () {
 
             let table = $('#example1').DataTable({
-                "ajax": "/api/stationeries/?format=datatables",
+                "ajax": "/api/stocktransferins/?format=datatables",
                 "serverSide": true,
                 "order": [[0, 'desc']],
                 "columns": [
                     {"data": "id", render: $.fn.dataTable.render.text()},
                     {
-                        "data": "name", render: function (data, type, row) {
-                            return '<a href="' + row['id'] + '/">' + data + '</a>'
+                        "data": "created_at", render: function (d) {
+                            return '<small class="label bg-blue" style="font-size: 13px">' + moment(d).format("DD/MM/YYYY") + '</small> ' + moment(d).format("HH:mm:SS")
                         }
                     },
                     {
-                        "data": "type__id",
-                        render: function (data, type, row, meta) {
+                        "data": "created_by__id", render: function (data, type, row) {
                             console.log(data)
-                            return row['type_detail'].type_name;
+                            return row['created_by_detail'].first_name + ' ' + row['created_by_detail'].last_name
+                        }
+                    },
+
+
+                    {
+                        "data": "supplier__id", render: function (data, type, row) {
+                            return row['supplier_detail'].name
                         }
                     },
                     {
-                        "data": "available_count", render: function (d) {
-                            return '<small class="label bg-blue" style="width:100%">' + d + '</small>'
+                        "data": "total", render: function (data, type, row) {
+                            return '<span id="total-display" class="text-blue text-bold" style="font-size: 15px">' + data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + '</span> VNĐ</a>'
                         }
                     },
-                    {"data": "price", render: $.fn.dataTable.render.text()},
-                    {"data": "more_info", render: $.fn.dataTable.render.text()},
                     {
-                        "data": "type_detail", render: function (d) {
+                        "data": "paid", render: function (data, type, row) {
+                            return '<span id="total-display" class="text-green text-bold" style="font-size: 15px">' + data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + '</span> VNĐ</a>'
+                        }
+                    },
+                    {
+                        "data": "dept", render: function (data, type, row) {
+                            return '<span id="total-display" class="text-red text-bold" style="font-size: 15px">' + data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + '</span> VNĐ</a>'
+                        }
+                    },
+                    {
+                        "data": "id", render: function (data, type, row) {
+                            return '<a href="' + data + '/" class="btn btn-info">More info </a>'
+                        }
+                    },
+                    {
+                        "data": "created_by_detail", render: function (data, type, row) {
                             return ""
                         }
-                    }
+                    },
+                    {
+                        "data": "supplier_detail", render: function (data, type, row) {
+                            return ""
+                        }
+                    },
 
                 ],
                 "paging": true,
@@ -187,6 +222,7 @@
             });
 
             // Event listener to the two range filtering inputs to redraw on input
+
             $("#btn-filter").click(function () {
 
 
@@ -196,10 +232,9 @@
 
                 var ref_control = {
                     ".id-filter": 0,
-                    ".name-filter": 1,
-                    ".brand-filter": 5,
-                    ".type-select": 2,
-
+                    ".created_at-filter": 1,
+                    ".user-select": 2,
+                    ".supplier-select": 3
                 }
 
                 for (cls in ref_control) {
@@ -210,7 +245,6 @@
                 }
 
             });
-
         });
 
     </script>

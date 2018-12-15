@@ -18,6 +18,8 @@ class MerchandiseSerializer(ModelSerializer):
     type_detail = MerchandiseTypeSerializer(source='type', read_only=True)
     merchandise_type = fields.IntegerField(read_only=True)
     available_count = fields.IntegerField(read_only=True)
+    type__id = fields.CharField(read_only=True)
+
 
     class Meta:
         model = Merchandise

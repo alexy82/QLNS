@@ -1,0 +1,298 @@
+{% extends 'layout/main.html' %}
+{% load static %}
+
+{% block header %}
+    <style>
+
+
+    </style>
+{% endblock %}
+{% block section %}
+    <a href="{% url 'QuanLyNhaSach:users' %}">User List</a><i class="fa fa-fw  fa-angle-right"></i>
+    {{ user_selected.get_full_name }}
+{% endblock %}
+{% block content %}
+    <form method="PATCH" action="/api/users/{{ user_selected.id }}/">
+        {% csrf_token %}
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box box-solid box-primary">
+                        <div class="box-header">
+                            <h3 class="box-title">Personal info</h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                        class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <div class="box-body">
+
+
+                            <div class="form-group">
+                                <label for="email" class="col-md-1 control-label">Email</label>
+
+                                <div class="col-md-11">
+                                    <div class="input-group" style="margin-bottom: 20px">
+                                        <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+
+                                        <input name="email" type="email" class="form-control" id="email"
+                                               placeholder="Email" value="{{ user_selected.email }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="first-name" class="col-md-1 control-label">First Name</label>
+
+                                <div class="col-md-11">
+                                    <div class="input-group" style="margin-bottom: 20px">
+                                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+                                        <input name="first_name" type="text" class="form-control" id="first-name"
+                                               placeholder="First Name" value="{{ user_selected.first_name }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="last-name" class="col-md-1 control-label">Last Name</label>
+
+                                <div class="col-md-11">
+                                    <div class="input-group" style="margin-bottom: 20px">
+                                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+                                        <input name="last_name" type="text" class="form-control" id="last-name"
+                                               placeholder="Last Name" value="{{ user_selected.last_name }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">Permissions Config</h3>
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="is-active" type="checkbox" {% if user_selected.is_active %}
+                                               checked{% endif %} >
+                                        <strong> Is Active</strong>
+                                    </label>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="is-staff" type="checkbox" {% if user_selected.is_staff %}
+                                               checked{% endif %}>
+                                        <strong> Is Staff</strong>
+                                    </label>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="is_superuser" type="checkbox" {% if user_selected.is_superuser %}
+                                               checked{% endif %}>
+                                        <strong> Is SuperUser</strong>
+                                    </label>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="box-body">
+                            <h4 class="box-title text-info">Permissions</h4>
+
+                            <div class="row">
+                                <div class="col-xs-5">
+                                    <div class="box box-solid box-primary">
+                                        <div class="box-header">
+                                            <h6 class="box-title" style="font-size: 15px">Available user
+                                                permissions</h6>
+
+                                        </div>
+
+                                        <select name="from" id="multiselect-permission" class="form-control"
+                                                style="height: 300px"
+                                                multiple="multiple">
+                                            {% for unselected_permission in unselected_permissions %}
+                                                <option style="font-size: 17px;padding: 2px"
+                                                        value="{{ unselected_permission.id }}">{{ unselected_permission.content_type_id }} {{ unselected_permission.name }}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-xs-2" style="margin-top: 50px">
+                                    <button type="button" id="multiselect-permission_rightAll"
+                                            class="btn btn-block btn-danger"><i
+                                            class="glyphicon glyphicon-forward"></i></button>
+                                    <button type="button" id="multiselect-permission_rightSelected"
+                                            class="btn btn-block btn-primary"><i
+                                            class="glyphicon glyphicon-chevron-right"></i></button>
+                                    <button type="button" id="multiselect-permission_leftSelected"
+                                            class="btn btn-block btn-primary"><i
+                                            class="glyphicon glyphicon-chevron-left"></i></button>
+                                    <button type="button" id="multiselect-permission_leftAll"
+                                            class="btn btn-block  btn-danger"><i
+                                            class="glyphicon glyphicon-backward"></i></button>
+                                </div>
+
+                                <div class="col-xs-5">
+                                    <div class="box box-solid box-primary">
+                                        <div class="box-header">
+                                            <h6 class="box-title" style="font-size: 15px">Chosen user permissions</h6>
+
+                                        </div>
+                                        <select name="to" id="multiselect-permission_to" class="form-control"
+                                                style="height: 300px"
+                                                multiple="multiple">
+                                            {% for selected_permission in selected_permissions %}
+                                                <option style="font-size: 17px;padding: 2px"
+                                                        value="{{ selected_permission.id }}">{{ selected_permission.content_type_id }} {{ selected_permission.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="box-title text-info" style="margin-top: 100px">Groups</h4>
+
+                            <div class="row">
+                                <div class="col-xs-5">
+                                    <div class="box box-solid box-primary">
+                                        <div class="box-header">
+                                            <h6 class="box-title" style="font-size: 15px">Available groups</h6>
+
+                                        </div>
+                                        <select name="from" id="multiselect-group" class="form-control"
+                                                style="height: 300px"
+                                                multiple="multiple">
+                                            {% for unselected_group in unselected_groups %}
+                                                <option style="font-size: 17px;padding: 2px"
+                                                        value="{{ unselected_group.id }}">{{ unselected_group.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-xs-2" style="margin-top: 50px">
+                                    <button type="button" id="multiselect-group_rightAll"
+                                            class="btn btn-block  btn-danger"><i
+                                            class="glyphicon glyphicon-forward"></i></button>
+                                    <button type="button" id="multiselect-group_rightSelected"
+                                            class="btn btn-block btn-primary"><i
+                                            class="glyphicon glyphicon-chevron-right"></i></button>
+                                    <button type="button" id="multiselect-group_leftSelected"
+                                            class="btn btn-block btn-primary"><i
+                                            class="glyphicon glyphicon-chevron-left"></i></button>
+                                    <button type="button" id="multiselect-group_leftAll"
+                                            class="btn btn-block  btn-danger"><i
+                                            class="glyphicon glyphicon-backward"></i></button>
+                                </div>
+                                <div class="col-xs-5">
+                                    <div class="box box-solid box-primary">
+                                        <div class="box-header">
+                                            <h6 class="box-title" style="font-size: 15px">Chosen groups</h6>
+
+                                        </div>
+                                        <select name="to" id="multiselect-group_to" class="form-control"
+                                                style="height: 300px"
+                                                multiple="multiple">
+                                            {% for selected_group in selected_groups %}
+                                                <option style="font-size: 17px;padding: 2px"
+                                                        value="{{ selected_group.id }}">{{ selected_group.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-11">
+
+                                </div>
+                                <div class="col-md-1">
+
+                                    <button id="save" style="float: right;"
+                                            class="btn btn-primary">
+                                        Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section>
+    </form>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static "plugins/multiselect.js" %}"></script>
+    <script src="{% static "bower_components/datatables.net/js/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js" %}"></script>
+    <script>
+        $(function () {
+
+            $('#multiselect-permission').multiselect();
+            $('#multiselect-group').multiselect();
+
+
+            $("form").submit(function (e) {
+
+
+                let form = $(this);
+                let url = form.attr('action');
+                let permissions_selected = []
+                // serializes the form's elements.
+                $("#multiselect-permission_to option").each(function () {
+                    permissions_selected.push(parseInt($(this).val()))
+                });
+                let groups_selected = []
+                $("#multiselect-group_to option").each(function () {
+                    groups_selected.push(parseInt($(this).val()))
+                });
+
+                $.ajax({
+                    type: "PUT",
+                    url: url,
+                    data: JSON.stringify({
+                        "username": $("#username").val(),
+                        "email": $("#email").val(),
+                        "first_name": $("#first-name").val(),
+                        "last_name": $("#last-name").val(),
+                        "is_superuser": $('#is_superuser').is(':checked'),
+                        "is_staff": $('#is-staff').is(':checked'),
+                        "is_active": $('#is-active').is(':checked'),
+                        "groups_ids": groups_selected,
+                        "permissions_ids": permissions_selected
+                    }),// serializes the form's elements.
+                    contentType: "application/json",
+                    headers: {
+                        "X-CSRFToken": "{{csrf_token}}"
+                    },
+                    success: function (data) {
+                        $("[name='routing_key']").val("");
+                        $.notify({
+                            // options
+                            message: '<span style="font-size:15px;">Update user <strong style="color:green;">' + data.email + ' </strong> success</span>'
+                        }, {
+                            // settings
+                            type: 'warning'
+                        });
+                    }
+                });
+
+                e.preventDefault(); // avoid to execute the actual submit of the form.
+            });
+        })
+    </script>
+{% endblock %}

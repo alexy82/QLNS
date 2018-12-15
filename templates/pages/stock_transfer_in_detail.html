@@ -1,0 +1,404 @@
+{% extends 'layout/main.html' %}
+{% load static %}
+
+{% block header %}
+    <style>
+        table {
+            table-layout: fixed;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td {
+            word-wrap: break-word;
+        }
+
+        th {
+            word-wrap: break-word;
+        }
+
+
+    </style>
+{% endblock %}
+{% block section %}
+    <a href="{% url 'QuanLyNhaSach:stock-transfer-in' %}">Goods Delivery Note List</a>
+    <i class="fa fa-fw  fa-angle-right"></i>
+    {% if  note %}
+        View
+    {% else %}
+        Add
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <section class="content">
+        <div class="row">
+            <div class="col-lg-9">
+                {% if not note %}
+                    <div class="box box-solid box-primary">
+                        <div class="box-header">
+                            <h3 class="box-title">Add Items</h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                        class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <div class="row">
+
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="input-group col-md-12">
+                                        <label>Merchandise</label>
+                                        <select class="form-control select2 js-example-basic-single"
+                                                data-placeholder="Select a State" style="width: 100%;" tabindex="-1"
+                                                aria-hidden="true">
+                                            <optgroup label="Book">
+                                                {% for unit in books %}
+                                                    <option value="{{ unit.id }}-{{ unit.price }}-{{ unit.name }}">{{ unit.id }}.{{ unit.name }}
+                                                        - {{ unit.more_info }}</option>
+                                                {% endfor %}
+                                            </optgroup>
+                                            <optgroup label="Stationery">
+                                                {% for unit in stationeries %}
+                                                    <option value="{{ unit.id }}-{{ unit.price }}-{{ unit.name }}">{{ unit.id }}.{{ unit.name }}
+                                                        - {{ unit.more_info }}</option>
+                                                {% endfor %}
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="input-group col-md-12">
+                                        <label>Price</label>
+                                        <input type="number" min="1" value="0" class="form-control price"
+                                               placeholder="price of one">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="input-group col-md-12">
+                                        <label>Count</label>
+                                        <input type="number" min="1" value="1" class="form-control count"
+                                               placeholder="Number of unit">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-10"></div>
+                                <div class="col-md-2" style="margin-top: 10px">
+                                    <button id="btn-filter" style="float: right;"
+                                            class="add btn btn-primary">
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                {% endif %}
+
+                <div class="box  box-primary" style="min-height: 300px">
+                    <div class="box-header">
+                        <h3 class="box-title">Goods Delivery Note Detail </h3>
+
+
+                    </div>
+
+
+                    <div class="box-body">
+                        <table id="bill" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th style="width: 10%" class="text-center">ST</th>
+                                <th style="width: 45%" class="text-center">Product</th>
+                                <th style="width: 15%" class="text-center">Price</th>
+                                <th style="width: 15%" class="text-center">Count</th>
+                                <th style="width: 15%" class="text-center">Total</th>
+                                <th style="width: 30px" class="text-center"></th>
+
+                            </tr>
+                            </thead>
+                            <tbody id="body-bill">
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+
+                <div class="box  box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">Goods Delivery note</h3>
+
+
+                    </div>
+                    <div class="box-body">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <b>Created at</b> <a class="pull-right">
+                                <small class="label bg-green"
+                                       style="font-size: 13px">{% if note %}
+                                    {{ note.created_at|date:"d/m/Y H:i:s" }}{% else %} Now{% endif %}</small>
+                            </a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Created by</b> <a class="pull-right">
+                                <small class="label bg-green"
+                                       style="font-size: 13px"> {{ user.profile.display_name }}</small>
+                            </a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Total</b> <a class="pull-right"><span id="total-display" class="text-green text-bold"
+                                                                         style="font-size: 17px">0</span> VNĐ</a>
+                            </li>
+                            {% if note %}
+                                <li class="list-group-item">
+                                    <b>Paid</b> <a class="pull-right"><span id="paid-display"
+                                                                            class="text-green text-bold"
+                                                                            style="font-size: 17px">0</span> VNĐ</a>
+                                </li>
+                            {% endif %}
+                            <li class="list-group-item">
+                                <b>Dept</b> <a class="pull-right"><span id="dept-display" class="text-green text-bold"
+                                                                        style="font-size: 17px">0</span> VNĐ</a>
+                            </li>
+                            {% if not note %}
+                                <li class="list-group-item">
+                                    <label>Supplier</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+                                        <select id="supplier"
+                                                class="form-control type-select text-bold select2 js-example-basic-single"
+                                                style="font-size: 15px" required>
+                                            {% for supplier in suppliers %}
+                                                <option value="{{ supplier.id }}">{{ supplier.name }}</option>
+                                            {% endfor %}
+                                        </select>
+
+
+                                    </div>
+                                    <label>Paid</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-money"></i></span>
+
+                                        <input id="paid" name="paid" type="number" class="form-control"
+                                               placeholder="money" required value="0">
+
+
+                                    </div>
+                                </li>
+
+
+                                <button id="create" class="btn btn-primary"
+                                        style="margin-top: 10px;float: right;">Create
+                                </button>
+                            {% else %}
+                                <li class="list-group-item">
+                                    <b>Supplier</b> <span class="pull-right">
+                                    <span id="dept-display"
+                                          class="text-green text-bold"
+                                          style="font-size: 17px">
+                                    {{ note.supplier.name }}
+                                    </span>
+                                    <a href="/suppliers/{{ note.supplier.id }}/">
+                                        <i class="fa fa-info-circle text-info"></i>
+                                    </a>
+                                </span>
+                                </li>
+
+                            {% endif %}
+
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <input type="hidden" id="id_note">
+{% endblock %}
+
+
+{% block script %}
+    <script src="{% static "bower_components/datatables.net/js/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js" %}"></script>
+    <script>
+        {% if not note %}
+            var select_item = {}
+            var total_all = 0;
+            var paid = 0;
+
+            function render_row(raw_data, count, price) {
+                $('#body-bill').html("");
+
+                data = raw_data.split('-');
+                id = data[0];
+
+                unit_name = data[2];
+                price = price;
+                item = {id: id, name: unit_name, price: price, count: count}
+                if (select_item[id] == null) {
+                    select_item[id] = item
+                }
+                else {
+                    select_item[id].count += count
+                }
+                stt = 1;
+                total_all = 0;
+                Object.keys(select_item).forEach(function (key) {
+                    console.log(key)
+                    total = select_item[key].count * parseInt(select_item[key].price);
+                    total_all += total
+                    cls = stt % 2 == 0 ? 'even' : 'odd';
+                    var template = `<tr id="${key}" role="row" class="${cls}"><td class="text-center">${stt}</td><td >${select_item[key].name}</td><td class="text-center">${select_item[key].price.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")}</td><td class="text-center">${select_item[key].count}</td><td class="text-center">${total.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")}</td><td><button value="${select_item[key].id}" class="close text-danger">×</button></td></tr>`
+                    $('#body-bill').append(template)
+                    stt++;
+                });
+                $("#total-display").html(total_all.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+                dept = total_all - paid
+                $('#dept-display').html(dept.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+                $("button.close").click(function () {
+
+                    id = $(this).val()
+                    console.log(id);
+                    $("#" + id).remove()
+                    delete select_item[id]
+                    total_all = 0;
+                    Object.keys(select_item).forEach(function (key) {
+                        total = select_item[key].count * parseInt(select_item[key].price);
+                        total_all += total
+                    });
+                    $("#total-display").html(total_all.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+                    dept = total_all - paid
+                    $('#dept-display').html(dept.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+
+
+                })
+            }
+
+            $(document).ready(function () {
+                $('#paid').on('input', function (e) {
+                    value = $(this).val();
+                    if (value == "")
+                        value = 0
+                    paid = value
+                    dept = total_all - paid
+                    $('#dept-display').html(dept.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+                });
+
+                $('.add').click(function () {
+                    raw_str = $(".select2").val()
+                    count = parseInt($('.count').val() == "" ? 1 : $('.count').val())
+                    price = parseInt($('.price').val() == "" ? 0 : $('.price').val())
+                    render_row(raw_str, count, price);
+                })
+                $('.select2').select2();
+
+            });
+            $('#create').click(function (e) {
+                if (total_all == 0) {
+
+                    $.notify({
+                        // options
+                        message: '<span style="font-size:15px;"> Can not create empty note </span>'
+                    }, {
+                        // settings
+                        type: 'error'
+                    });
+                    throw new Error("Stop");
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: '/api/stocktransferins/',
+                    data: {
+                        "paid": paid,
+                        "supplier": $('#supplier').val()
+                    },
+                    headers: {
+                        "X-CSRFToken": "{{csrf_token}}"
+                    },
+                    success: function (data) {
+                        var items = new Array();
+
+                        Object.keys(select_item).forEach(function (key) {
+                            var item = {
+                                "unit": key,
+                                "count": select_item[key].count,
+                                "price": select_item[key].price,
+                                "inside": data.id
+                            }
+                            items.push(item)
+                        });
+                        $.ajax({
+                            type: "POST",
+                            url: '/api/stocktransferins-detail/',
+                            data: {"items": JSON.stringify(items)},
+                            headers: {
+                                "X-CSRFToken": "{{csrf_token}}"
+                            },
+                            success: function (data) {
+                                console.log(data)
+                            },
+                            error: function () {
+
+                            }
+
+
+                        });
+
+                        window.location.href = "{% url 'QuanLyNhaSach:stock-transfer-in-add' %}";
+
+                    },
+                    error: function () {
+                        $.notify({
+                            // options
+                            message: '<span style="font-size:15px;"> Something went wrong</span>'
+                        }, {
+                            // settings
+                            type: 'error'
+                        });
+                        throw new Error("Can't create note");
+                    }
+
+                });
+
+
+            })
+        {% else %}
+            var total_all = 0
+            var paid = {{ note.paid }}
+            var select_item = {
+                {% for note_detail in note_details %}
+
+                    "{{ note_detail.id}}": {
+                        name: "{{ note_detail.unit.name }}",
+                        price: {{ note_detail.price }},
+                        count: {{ note_detail.count }}
+                    },
+                {% endfor %}
+            }
+            var stt = 1
+            Object.keys(select_item).forEach(function (key) {
+                total = select_item[key].count * parseInt(select_item[key].price);
+                total_all += total
+                cls = stt % 2 == 0 ? 'even' : 'odd';
+                var template = `<tr id="${key}" role="row" class="${cls}"><td class="text-center">${stt}</td><td >${select_item[key].name}</td><td class="text-center">${select_item[key].price.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")}</td><td class="text-center">${select_item[key].count}</td><td class="text-center">${total.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")}</td></tr>`
+                $('#body-bill').append(template)
+                stt++;
+            });
+            $("#total-display").html(total_all.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+            dept = total_all - paid
+            $('#dept-display').html(dept.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+            $('#paid-display').html(paid.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+        {% endif%}
+
+
+    </script>
+{% endblock %}

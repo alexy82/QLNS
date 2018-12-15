@@ -1,8 +1,6 @@
 from django.db import models
-from django.db.models import Sum
 from django.contrib.auth.models import User
 from QuanLyNhaSach.models.supplier import Supplier
-from QuanLyNhaSach.models.store import Store
 from QuanLyNhaSach.models.merchandise import Merchandise
 
 
@@ -15,7 +13,6 @@ class StockTransferIn(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='stock_transfer_in_list')
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, related_name='stock_transfer_in_list')
     paid = models.IntegerField(default=0)
-    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='stock_transfer_in_list')
 
     @property
     def total(self):

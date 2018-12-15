@@ -1,5 +1,4 @@
 from QuanLyNhaSach.models.merchandise import *
-from QuanLyNhaSach.models.store import *
 from QuanLyNhaSach.models.supplier import *
 from QuanLyNhaSach.models.customer import *
 from QuanLyNhaSach.models.promotion import *

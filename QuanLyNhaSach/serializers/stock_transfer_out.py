@@ -6,14 +6,14 @@ from QuanLyNhaSach.serializers.promotion import PromotionSerializer
 from QuanLyNhaSach.serializers.mechandise import MerchandiseSerializer
 from QuanLyNhaSach.serializers.customer import CustomerSerializer
 from QuanLyNhaSach.business_layer.merchandise import MerchandiseHelper
+from QuanLyNhaSach.views.user import UserSerializer
 
 
 class StockTransferOutDetailSerializer(ModelSerializer):
     id = fields.CharField(required=False)
-    price = fields.IntegerField(read_only=True)
     amount = fields.IntegerField(read_only=True)
     unit_detail = MerchandiseSerializer(read_only=True, source='unit')
-    count = fields.IntegerField(required=True)
+    inside__created_at = fields.DateTimeField(read_only=True)
 
     def validate_count(self, count):
         unit = MerchandiseHelper.get_unit_safety(self.initial_data['unit'])
@@ -32,12 +32,13 @@ class StockTransferOutSerializer(ModelSerializer):
     id = fields.CharField(required=False)
     detail = StockTransferOutDetailSerializer(source='list_detail', many=True, read_only=True)
     created_at = fields.DateTimeField(read_only=True)
+    created_by_detail = UserSerializer(read_only=True, source='created_by')
+    created_by__id = fields.CharField(read_only=True)
     total = fields.IntegerField(read_only=True)
-    dept = fields.IntegerField(read_only=True)
-    promotion = fields.IntegerField(required=False, read_only=True)
+    promotion__id = fields.IntegerField(required=False, read_only=True)
     promotion_detail = PromotionSerializer(read_only=True, source='promotion')
     customer_detail = CustomerSerializer(read_only=True, source='customer')
-    promotion_code = fields.CharField(required=False)
+    customer__id = fields.CharField(read_only=True)
 
     def validate_promotion_code(self, promotion_code):
         if promotion_code is None or promotion_code == "":

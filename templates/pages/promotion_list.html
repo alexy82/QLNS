@@ -1,0 +1,298 @@
+{% extends 'layout/main.html' %}
+{% load static %}
+
+{% block header %}
+    <style>
+        table {
+            table-layout: fixed;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td {
+            word-wrap: break-word;
+        }
+
+        th {
+            word-wrap: break-word;
+        }
+
+
+    </style>
+{% endblock %}
+{% block section %}
+    Promotion Manager
+{% endblock %}
+{% block content %}
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">Generate promotion</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                    class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <form action="/api/promotions/">
+                            <div class="col-lg-2">
+                                <div class="input-group col-md-12">
+                                    <label>From</label>
+                                    <input type="number" class="form-control from-money" placeholder="" required>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2">
+                                <div class="input-group col-md-12">
+                                    <label>To</label>
+                                    <input type="number" class="form-control to-money" placeholder=" " required>
+                                </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <div class="input-group col-md-12">
+                                    <label>Money discount</label>
+                                    <input type="number" class="form-control discount" placeholder=" " required>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="input-group col-md-12">
+                                    <label>Date Expired</label>
+                                    <input type="date" class="form-control date-expired" placeholder=" " required>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="input-group col-md-12">
+                                    <label>Number of gift code</label>
+                                    <input type="number" class="form-control number-promotion" placeholder=" " required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-10"></div>
+                            <div class="col-md-2" style="margin-top: 10px">
+                                <button id="btn-filter" style="float: right;"
+                                        class="btn btn-primary">
+                                    Generate
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+                <div class="box  box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">Data</h3>
+
+                    </div>
+
+
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-4" style="margin-bottom: 10px">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+
+                                        <input type="text" class="form-control code-filter"
+                                               placeholder="Gift code">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th style="width: 10%">ID</th>
+                                <th style="width: 15%">Code</th>
+                                <th colspan="2" class="text-center" style="width: 20%">Range</th>
+                                <th style="width: 15%">Money Discount</th>
+                                <th style="">Date Expired</th>
+                                <th style="width:  15%">Status</th>
+                                <th style="width: 30px;"></th>
+
+                            </tr>
+                            </thead>
+                            <tbody id="data-table">
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th style="width: 10%">ID</th>
+                                <th style="width: 15%">Code</th>
+                                <th colspan="2" class="text-center" style="width: 20%">Range</th>
+                                <th style="width: 15%">Money Discount</th>
+                                <th style="">Date Expired</th>
+                                <th style="width:  15%">Status</th>
+                                <th style="width: 30px;"></th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+
+{% block script %}
+    <script src="{% static "bower_components/datatables.net/js/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js" %}"></script>
+    <script>
+        var input_example = {
+            1: "",
+            2: ""
+        }
+        $(function () {
+                let table = $('#example1').DataTable({
+                    "ajax": "/api/promotions/?format=datatables",
+                    "serverSide": true,
+                    "order": [[0, 'desc']],
+                    'columnDefs': [
+                        {
+                            "targets": 0, // your case first column
+                            "className": "text-center",
+                        },
+                        {
+                            "targets": 1, // your case first column
+                            "className": "text-center",
+                        }, {
+                            "targets": 2, // your case first column
+                            "className": "text-center",
+                        }, {
+                            "targets": 3, // your case first column
+                            "className": "text-center",
+                        }, {
+                            "targets": 4, // your case first column
+                            "className": "text-center",
+                        }, {
+                            "targets": 5, // your case first column
+                            "className": "text-center",
+                        }, {
+                            "targets": 6, // your case first column
+                            "className": "text-center",
+                        }, {
+                            "targets": 7, // your case first column
+                            "className": "text-center",
+                        },],
+                    "columns": [
+                        {"data": "id", render: $.fn.dataTable.render.text()},
+
+                        {
+                            "data": "code", render: function (data, type, row) {
+                                return '<small class="label bg-green" style="font-size:12px">' + data + '</small>'
+                            }
+                        },
+
+                        {"data": "min", render: $.fn.dataTable.render.text()},
+                        {"data": "max", render: $.fn.dataTable.render.text()},
+                        {
+                            "data": "money_discount", render: function (d) {
+                                return d + '   <small class="label bg-red" style="font-size:10px">  <i class="fa  fa-arrow-down"></i></small>'
+                            }
+                        },
+                        {
+                            "data": "date_expired", render: function (d) {
+                                return moment(d).format("DD/MM/YYYY");
+                            }
+                        },
+                        {
+                            "data": "is_used", render: function (d) {
+                                if (d)
+                                    return '<small class="label bg-red" style="font-size:12px">Used</small>'
+
+                                return '<small class="label bg-green" style="font-size:12px">Available</small>'
+                            }
+                        },
+                        {
+                            "data": "id",
+                            "render": function (d) {
+                                return '<button class="close text-danger" data-dismiss="alert" aria-hidden="true" value="' + d + '" >×</button>'
+                            }
+                        },
+
+                    ],
+                    "paging": true,
+                    "lengthChange": false,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": false,
+                    "dom": "lrtip",
+                    "pageLength": 50,
+                    "fnDrawCallback": function (settings, json) {
+                        $('.close').click(function () {
+                            if (confirm("Do you want to delete this promotion?")) {
+                                $.ajax({
+
+                                    type: "DELETE",
+
+
+                                    url: '/api/promotions/' + $(this).val() + '/',
+                                    headers: {
+                                        "X-CSRFToken": "{{csrf_token}}"
+                                    },
+                                });
+                                table.search('')
+                                    .columns().search('')
+                                    .draw();
+                                for (column_t in input_example) {
+                                    table.column(column_t).search(input_example[column_t]).draw();
+                                }
+                            }
+
+                        })
+                    }
+
+                });
+                $("form").submit(function (e) {
+
+                    e.preventDefault();
+                    var form = $(this);
+                    var url = form.attr('action');
+                    var items = new Array();
+                    for (var i = 0; i < $('.number-promotion').val(); i++) {
+                        var x = {
+                            "min": $('.from-money').val(),
+                            "max": $('.to-money').val(),
+                            "date_expired": $('.date-expired').val(),
+                            "money_discount": $('.discount').val(),
+                        }
+                        items.push(x)
+
+                    }
+                    console.log(JSON.stringify(items))
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: {"items": JSON.stringify(items)},
+                        headers: {
+                            "X-CSRFToken": "{{csrf_token}}"
+                        },
+                        success: function () {
+                            $.notify({
+                                // options
+                                message: '<span style="font-size:15px;">Generate success</span>'
+                            }, {
+                                // settings
+                                type: 'info'
+                            });
+                        },
+
+                    });
+
+
+                    // avoid to execute the actual submit of the form.
+
+                });
+
+                $('.code-filter').on('input', function (e) {
+                    table.column(1).search($(this).val()).draw();
+                })
+
+
+            }
+        )
+    </script>
+{% endblock %}

@@ -1,9 +1,9 @@
-from django.conf.urls import url
 from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.urls import reverse, path
 from QuanLyNhaSach.views import customer
-from QuanLyNhaSach.views import merchandise, supplier, promotion, stock_transfer_out, stock_transfer_in, user, group
+from QuanLyNhaSach.views import merchandise, supplier, promotion, stock_transfer_out, stock_transfer_in, user, group, \
+    home
 from api.views import check_promotion
 
 app_name = 'QuanLyNhaSach'
@@ -15,7 +15,7 @@ def logout_view(request):
 
 
 urlpatterns = [
-    path('', customer.CustomerListView.as_view(), name='index'),
+    path('', home.Home.as_view(), name='index'),
     path('logout/', logout_view, name='logout'),
 
     path('customers/', customer.CustomerListView.as_view(), name='customers'),

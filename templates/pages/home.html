@@ -1,0 +1,214 @@
+{% extends 'layout/main.html' %}
+{% load static %}
+
+{% block header %}
+    <style>
+
+
+    </style>
+{% endblock %}
+{% block section %}
+    <div class="row">
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>{{ count_inbound }}</h3>
+
+                    <p>Inbound</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-arrow-down-b"></i>
+                </div>
+                <a href="{% url 'QuanLyNhaSach:stock-transfer-in' %}" class="small-box-footer">More info <i
+                        class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>{{ count_outbound }}</h3>
+
+                    <p>Outbound</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-arrow-up-b"></i>
+                </div>
+                <a href="{% url 'QuanLyNhaSach:stock-transfer-out' %}" class="small-box-footer">More info <i
+                        class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3>{{ count_bill }}</h3>
+
+                    <p>Bills</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-clipboard"></i>
+                </div>
+                <a href="{% url 'QuanLyNhaSach:stock-transfer-out' %}" class="small-box-footer">More info <i
+                        class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3><span id="income"></span></h3>
+
+                    <p>Income</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href="{% url 'QuanLyNhaSach:stock-transfer-in' %}" class="small-box-footer">More info <i
+                        class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <canvas id="bill" style="width: 100%;height: 500px"></canvas>
+        </div>
+        <div class="col-lg-6">
+            <canvas id="income_chart" style="width: 100%;height: 500px"></canvas>
+        </div>
+        <div class="col-lg-12">
+            <div class="box ">
+                <div class="box-header">
+                    <h3 class="box-title">Top best seller 7days recent</h3>
+                    <div class="box-tools pull-right">
+
+                    </div>
+                </div>
+
+                <div class="box-body">
+                    {% for item in best_seller %}
+                        {% with 100 as hundred %}
+                            <div class="progress-group">
+                                <a href="
+                                        {% if item.unit__merchandise_type == 0 %}{% url 'QuanLyNhaSach:stationeries-update' id=item.unit__id %}{% else %}{% url 'QuanLyNhaSach:books-update' id=item.unit__id %}{% endif %}"
+                                   class="progress-text">{{ item.unit__name }}</a>
+                                <span class="progress-number"><b>{% widthratio item.total hundred 1 %}</b>/{{ count_outbound }}</span>
+
+                                <div class="progress sm" style="margin-top: 2px">
+                                    <div class="progress-bar progress-bar-green"
+
+                                         style="width: {% widthratio item.total count_outbound 1 %}%"></div>
+
+                                </div>
+                            </div>
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+{% block content %}
+
+{% endblock %}
+
+{% block script %}
+    <script>
+
+        var bill_data = []
+        var bill_labels = []
+        {% for key,values in chart_bill.items %}
+            bill_data.push({{ values}})
+            bill_labels.push("{{ key }}")
+        {% endfor %}
+        bill_data.reverse()
+        bill_labels.reverse()
+        var money_data = []
+        var money_labels = []
+        {% for key,values in chart_money.items %}
+            money_data.push({{ values}})
+            money_labels.push("{{ key }}")
+        {% endfor %}
+        money_data.reverse()
+        money_labels.reverse()
+        var income ={{ income }};
+        $("#income").html(income.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+        new Chart(document.getElementById("bill"), {
+            type: 'line',
+            data: {
+                labels: bill_labels,
+                datasets: [{
+                    data: bill_data,
+                    label: "Bill",
+                    borderColor: "#3e95cd",
+                    fill: true,
+                    backgroundColor: "rgba(62, 149, 205,0.4)",
+                },
+                ]
+            },
+            options: {
+                responsive: false,
+                title: {
+                    display: true,
+                    text: 'Chart goods receipt note in 7 days recent'
+                },
+                scales: {
+                    yAxes: [{
+                        stacked: true,
+                        gridLines: {
+                            display: true,
+                            color: "rgba(255,99,132,0.2)",
+                        }
+                    }],
+                    xAxes: [{
+                        gridLines: {
+                            display: false
+                        }
+                    }]
+                }
+            }
+        })
+        ;
+        new Chart(document.getElementById("income_chart"), {
+            type: 'line',
+            data: {
+                labels: money_labels,
+                datasets: [{
+                    data: money_data,
+                    label: "Money",
+                    borderColor: "#d11b33",
+                    fill: true,
+                    backgroundColor: "rgba(232, 27, 55,0.4)",
+                },
+                ]
+            },
+            options: {
+                responsive: false,
+                title: {
+                    display: true,
+                    text: 'Chart money income in 7days recent'
+                },
+                scales: {
+                    yAxes: [{
+                        stacked: true,
+                        gridLines: {
+                            display: true,
+                            color: "rgba(255,99,132,0.2)",
+                        }
+                    }],
+                    xAxes: [{
+                        gridLines: {
+                            display: false
+                        }
+                    }]
+                }
+            }
+        })
+        ;
+
+
+    </script>
+{% endblock %}

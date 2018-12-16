@@ -3,6 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 from QuanLyNhaSach.serializers.customer import CustomerTypeSerializer, CustomerSerializer
 from QuanLyNhaSach.models.customer import Customer, CustomerType
 from QuanLyNhaSach.views.base import BaseITSAdminView
+from QuanLyNhaSach.models.stock_transfer_out import StockTransferOut
 
 
 class CustomerListView(BaseITSAdminView):
@@ -28,7 +29,9 @@ class CustomerUpdateView(BaseITSAdminView):
     def get(self, request, id, **params):
         customer = get_object_or_404(Customer, pk=id)
         self.extra.update({"customer": customer,
-                           "url": '/api/customers/{}/'.format(id)})
+                           "url": '/api/customers/{}/'.format(id),
+                           "note_out_list": StockTransferOut.objects.filter(customer__id=id)}
+                          )
         params.update(self.extra)
         return render(request, self.template_name, params)
 

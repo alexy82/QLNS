@@ -15,14 +15,6 @@ class StockTransferOutDetailSerializer(ModelSerializer):
     unit_detail = MerchandiseSerializer(read_only=True, source='unit')
     inside__created_at = fields.DateTimeField(read_only=True)
 
-    def validate_count(self, count):
-        unit = MerchandiseHelper.get_unit_safety(self.initial_data['unit'])
-        if unit is None:
-            return None
-        if unit.available_count < count:
-            raise ValidationError('available-count is not enough ')
-        return count
-
     class Meta:
         model = StockTransferOutDetail
         fields = '__all__'

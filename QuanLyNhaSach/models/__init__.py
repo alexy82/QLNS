@@ -5,3 +5,4 @@ from QuanLyNhaSach.models.promotion import *
 from QuanLyNhaSach.models.stock_transfer_in import *
 from QuanLyNhaSach.models.stock_transfer_out import *
 from QuanLyNhaSach.models.user_profile import *
+

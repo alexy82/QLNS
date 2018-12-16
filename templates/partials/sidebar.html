@@ -18,7 +18,7 @@
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu" data-widget="tree">
             <li class="header">MANAGE</li>
-            <li id="nav-GDN" class="treeview">
+            <li id="nav-user" class="treeview">
                 <a href="#">
                     <i class="fa fa-users"></i> <span>User Manage</span>
                     <span class="pull-right-container">
@@ -26,15 +26,15 @@
                                 </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li id="nav-GDN-GDNL"><a href="{% url 'QuanLyNhaSach:users' %}"><i
+                    <li id="nav-user-ul"><a href="{% url 'QuanLyNhaSach:users' %}"><i
                             class="fa fa-list"></i>
                         User List</a></li>
-                    <li id="nav-GDN-AGDN"><a href="{% url 'QuanLyNhaSach:users_add' %}"><i
+                    <li id="nav-user-au"><a href="{% url 'QuanLyNhaSach:users_add' %}"><i
                             class="fa fa-plus-circle"></i> Add User</a></li>
 
                 </ul>
             </li>
-            <li id="nav-GDN" class="treeview">
+            <li id="nav-group" class="treeview">
                 <a href="#">
                     <i class="fa fa-stop"></i> <span>Group Permissions</span>
                     <span class="pull-right-container">
@@ -42,10 +42,10 @@
                                 </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li id="nav-GDN-GDNL"><a href="{% url 'QuanLyNhaSach:groups' %}"><i
+                    <li id="nav-group-gl"><a href="{% url 'QuanLyNhaSach:groups' %}"><i
                             class="fa fa-list"></i>
                         Group List</a></li>
-                    <li id="nav-GDN-AGDN"><a href="{% url 'QuanLyNhaSach:groups_add' %}"><i
+                    <li id="nav-group-ga"><a href="{% url 'QuanLyNhaSach:groups_add' %}"><i
                             class="fa fa-plus-circle"></i> Add Group</a></li>
 
                 </ul>
@@ -58,7 +58,7 @@
             </li>
             <li id="nav-GDN" class="treeview">
                 <a href="#">
-                    <i class="fa fa-sticky-note"></i> <span>Goods Delivery Note</span>
+                    <i class="fa fa-arrow-circle-o-up"></i> <span>Goods Delivery Note</span>
                     <span class="pull-right-container">
                                   <i class="fa fa-angle-left pull-right"></i>
                                 </span>
@@ -68,6 +68,22 @@
                             class="fa fa-list"></i>
                         Note List</a></li>
                     <li id="nav-GDN-AGDN"><a href="{% url 'QuanLyNhaSach:stock-transfer-in-add' %}"><i
+                            class="fa fa-plus-circle"></i> Add Note</a></li>
+
+                </ul>
+            </li>
+            <li id="nav-GRN" class="treeview">
+                <a href="#">
+                    <i class="fa fa-arrow-circle-o-down"></i> <span>Goods Receipt Note</span>
+                    <span class="pull-right-container">
+                                  <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li id="nav-GRN-GRNL"><a href="{% url 'QuanLyNhaSach:stock-transfer-out' %}"><i
+                            class="fa fa-list"></i>
+                        Note List</a></li>
+                    <li id="nav-GRN-AGRN"><a href="{% url 'QuanLyNhaSach:stock-transfer-out-add' %}"><i
                             class="fa fa-plus-circle"></i> Add Note</a></li>
 
                 </ul>

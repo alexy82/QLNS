@@ -1,0 +1,281 @@
+{% extends 'layout/main.html' %}
+{% load static %}
+
+{% block header %}
+    <style>
+        table {
+            table-layout: fixed;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td {
+            word-wrap: break-word;
+        }
+
+        th {
+            word-wrap: break-word;
+        }
+
+
+    </style>
+{% endblock %}
+{% block section %}
+    Goods Receipt Note List
+{% endblock %}
+{% block content %}
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box box-solid box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">Filter</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                    class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <div class="input-group col-md-12">
+                                    <label>ID</label>
+                                    <input type="number" class="form-control id-filter" placeholder="ID">
+                                </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <div class="input-group col-md-12">
+                                    <label>Created at</label>
+                                    <input type="date" class="form-control created_at-filter" placeholder="Name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="input-group col-md-12">
+                                    <label>Created by</label>
+                                    <select class="form-control user-select select2" style="width: 100%;">
+                                        <option selected="selected" value="">ALL</option>
+                                        {% for user in user_list %}
+                                            <option value="{{ user.id }}">{{ user.profile.display_name }}-{{ user.email }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="input-group col-md-12">
+                                    <label>Customer</label>
+                                    <select class="form-control customer-select select2" style="width: 100%;">
+                                        <option selected="selected" value="">ALL</option>
+                                        {% for customer in customer_list %}
+                                            <option value={{ customer.id }}>{{ customer.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="input-group col-md-12">
+                                    <label>Promotion</label>
+                                    <select class="form-control promotion-select select2" style="width: 100%;">
+                                        <option selected="selected" value="">ALL</option>
+                                        {% for promotion in promotion_list %}
+                                            <option value={{ promotion.id }}>{{ promotion.code }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10"></div>
+                            <div class="col-md-2" style="margin-top: 10px">
+                                <button id="btn-filter" style="float: right;"
+                                        class="btn btn-primary">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="box  box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">Data</h3>
+                        <div class="box-tools pull-right">
+                            <a type="button" class="btn btn-box-tool" title="Add type"
+                               href="{% url 'QuanLyNhaSach:stock-transfer-out-add' %}"><i
+                                    class="fa fa-plus text-info" style="font-size: 20px"></i>
+                            </a>
+                        </div>
+
+                    </div>
+
+
+                    <div class="box-body">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th style="width: 5%">ID</th>
+                                <th style="width: 18%">Created at</th>
+                                <th style="width: 20%">Created by</th>
+                                <th style="width: 15%">Customer</th>
+                                <th style="width: 18%">Promotion</th>
+                                <th style="width: 10%">Discount</th>
+                                <th style="width: 13%">Total</th>
+                                <th style="width: 11%"></th>
+                                <th hidden="hidden"></th>
+                                <th hidden="hidden"></th>
+                                <th hidden="hidden"></th>
+
+
+                            </tr>
+                            </thead>
+                            <tbody id="data-table">
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th style="width: 5%">ID</th>
+                                <th style="width: 18%">Created at</th>
+                                <th style="width: 20%">Created by</th>
+                                <th style="width: 15%">Customer</th>
+                                <th style="width: 18%">Promotion</th>
+                                <th style="width: 10%">Discount</th>
+                                <th style="width: 13%">Total</th>
+                                <th style="width: 11%"></th>
+                                <th hidden="hidden"></th>
+                                <th hidden="hidden"></th>
+                                <th hidden="hidden"></th>
+
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+
+{% block script %}
+    <script src="{% static "bower_components/datatables.net/js/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js" %}"></script>
+
+    <script>
+
+
+        $(document).ready(function () {
+            $(".select2").select2()
+
+            let table = $('#example1').DataTable({
+                "ajax": "/api/stocktransferouts/?format=datatables",
+                "serverSide": true,
+                "order": [[0, 'desc']],
+                "columns": [
+                    {"data": "id", render: $.fn.dataTable.render.text()},
+                    {
+                        "data": "created_at", render: function (d) {
+                            return '<small class="label bg-blue" style="font-size: 13px">' + moment(d).format("DD/MM/YYYY") + '</small> ' + moment(d).format("HH:mm:SS")
+                        }
+                    },
+                    {
+                        "data": "created_by__id", render: function (data, type, row) {
+                            console.log(data)
+                            return row['created_by_detail'].first_name + ' ' + row['created_by_detail'].last_name
+                        }
+                    },
+
+
+                    {
+                        "data": "customer__id", render: function (data, type, row) {
+                            return row['customer_detail'].name
+                        }
+                    },
+                    {
+                        "data": "promotion__id", render: function (data, type, row) {
+                            if (row['promotion_detail'] == null) {
+                                return '<span id="total-display" class="text-green text-bold" style="font-size: 15px">None</span>'
+                            }
+                            return '<small class="label bg-green" style="font-size: 15px">' + row['promotion_detail'].code + '</small>'
+                        }
+                    },
+                    {
+                        "data": "discount", render: function (data, type, row) {
+                            if (row['promotion_detail'] == null) {
+                                return '<span id="total-display" class="text-green text-bold" style="font-size: 15px">' + 0 + '</span>'
+                            }
+                            return '<span id="total-display" class="text-green text-bold" style="font-size: 13px">' + row['promotion_detail'].money_discount.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + '</span>'
+                        }
+                    },
+                    {
+                        "data": "total", render: function (data, type, row) {
+                            return '<span id="total-display" class="text-blue text-bold" style="font-size: 15px">' + data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + '</span> VNĐ</a>'
+                        }
+                    },
+                    {
+                        "data": "id", render: function (data, type, row) {
+                            return '<a href="' + data + '/" class="btn btn-info">More info </a>'
+                        }
+                    },
+                    {
+                        "data": "created_by_detail", render: function (data, type, row) {
+                            return ""
+                        }
+                    },
+                    {
+                        "data": "customer_detail", render: function (data, type, row) {
+                            return ""
+                        }
+                    },
+                    {
+                        "data": "promotion_detail", render: function (data, type, row) {
+                            return ""
+                        }
+                    },
+
+                ],
+                "paging": true,
+                "lengthChange": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "dom": "lrtip",
+                "pageLength": 50,
+                "search": {
+                    "regex": true
+                }
+            });
+
+            // Event listener to the two range filtering inputs to redraw on input
+
+            $("#btn-filter").click(function () {
+
+
+                table.search('')
+                    .columns().search('')
+                    .draw();
+
+                var ref_control = {
+                    ".id-filter": 0,
+                    ".created_at-filter": 1,
+                    ".user-select": 2,
+                    ".customer-select": 3,
+                    ".promotion-select": 4
+
+                }
+
+                for (cls in ref_control) {
+                    if ($(cls).val() != "") {
+                        table.column(ref_control[cls]).search($(cls).val()).draw();
+                        if (cls.indexOf('select') == -1)
+                            $(cls).val("")
+                    }
+                }
+
+            });
+        });
+
+    </script>
+{% endblock %}

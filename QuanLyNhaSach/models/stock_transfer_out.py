@@ -20,7 +20,7 @@ class StockTransferOut(models.Model):
     def total(self):
         total = sum(
             int(i.amount) for i in self.list_detail.all()) - (self.promotion.money_discount if self.promotion else 0)
-        return total if total > 0 else total
+        return total if total > 0 else 0
 
     class Meta:
         app_label = "QuanLyNhaSach"

@@ -4,7 +4,7 @@ from django.contrib.auth import logout
 from django.urls import reverse, path
 from QuanLyNhaSach.views import customer
 from QuanLyNhaSach.views import merchandise, supplier, promotion, stock_transfer_out, stock_transfer_in, user, group
-from django.contrib.auth import views
+from api.views import check_promotion
 
 app_name = 'QuanLyNhaSach'
 
@@ -51,6 +51,12 @@ urlpatterns = [
     path('delivery-note/', stock_transfer_in.StockTransferInListView.as_view(),
          name='stock-transfer-in'),
 
+    path('receipt-note/add/', stock_transfer_out.StockTransferOutAddView.as_view(), name='stock-transfer-out-add'),
+    path('receipt-note/<int:id>/', stock_transfer_out.StockTransferOutDetailView.as_view(),
+         name='stock-transfer-out-detail'),
+    path('receipt-note/', stock_transfer_out.StockTransferOutListView.as_view(),
+         name='stock-transfer-out'),
+
     path('profile/', user.ProfileView.as_view(), name='profile'),
     path('groups/', group.GroupListView.as_view(), name='groups'),
     path('groups/add/', group.GroupAddView.as_view(), name='groups_add'),
@@ -59,4 +65,5 @@ urlpatterns = [
     path('users/<int:user_id>/', user.UserEditView.as_view(), name='users_detail'),
     path('users/add/', user.UserAddView.as_view(), name='users_add'),
 
+    path('check/promotion/', check_promotion, name='promotions_check'),
 ]

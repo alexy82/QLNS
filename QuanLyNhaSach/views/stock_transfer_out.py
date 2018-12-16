@@ -12,8 +12,7 @@ from datetime import datetime
 from QuanLyNhaSach.serializers.stock_transfer_in import StockTransferInDetailSerializer, StockTransferInSerializer
 from QuanLyNhaSach.models.stock_transfer_in import StockTransferInDetail, StockTransferIn
 from QuanLyNhaSach.models.merchandise import Merchandise
-from QuanLyNhaSach.models.supplier import Supplier
-from QuanLyNhaSach.views.base import BaseITSAdminView
+from QuanLyNhaSach.models.customer import Customer
 from QLNS.middleware import get_current_user
 from QuanLyNhaSach.models.merchandise import Merchandise
 from QuanLyNhaSach.models.promotion import Promotion
@@ -24,16 +23,17 @@ class StockTransferOutListView(BaseITSAdminView):
     def __init__(self):
         super(StockTransferOutListView, self).__init__()
         self.template_name = 'pages/stock_transfer_out.html'
-        self.set_context_data(supplier_list=Supplier.objects.all(), user_list=User.objects.all())
+        self.set_context_data(customer_list=Customer.objects.all(), user_list=User.objects.all(),
+                              promotion_list=Promotion.objects.filter(is_used=True))
 
 
 class StockTransferOutAddView(BaseITSAdminView):
     def __init__(self):
         super(StockTransferOutAddView, self).__init__()
         self.template_name = 'pages/stock_transfer_out_detail.html'
-        self.set_context_data(books=Merchandise.objects.filter(merchandise_type=1),
-                              stationeries=Merchandise.objects.filter(merchandise_type=0),
-                              suppliers=Supplier.objects.all())
+        self.set_context_data(books=Merchandise.objects.filter(merchandise_type=1, available_count__gt=0),
+                              stationeries=Merchandise.objects.filter(merchandise_type=0, available_count__gt=0),
+                              customers=Customer.objects.all())
 
 
 class StockTransferOutDetailView(BaseITSAdminView):
@@ -67,6 +67,10 @@ class StockTransferOutViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         data = request.POST.dict()
         data['created_by'] = get_current_user().id
+        if data['promotion'] != '':
+            promotion = Promotion.objects.get(pk=data['promotion'])
+            promotion.is_used = True
+            promotion.save()
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)

@@ -38,20 +38,14 @@
                     </div>
                     <div class="box-body">
                         <form action="/api/promotions/">
-                            <div class="col-lg-2">
+                            <div class="col-lg-3">
                                 <div class="input-group col-md-12">
-                                    <label>From</label>
+                                    <label>Min</label>
                                     <input type="number" class="form-control from-money" placeholder="" required>
                                 </div>
                             </div>
 
-                            <div class="col-lg-2">
-                                <div class="input-group col-md-12">
-                                    <label>To</label>
-                                    <input type="number" class="form-control to-money" placeholder=" " required>
-                                </div>
-                            </div>
-                            <div class="col-lg-2">
+                            <div class="col-lg-3">
                                 <div class="input-group col-md-12">
                                     <label>Money discount</label>
                                     <input type="number" class="form-control discount" placeholder=" " required>
@@ -106,8 +100,8 @@
                             <thead>
                             <tr>
                                 <th style="width: 10%">ID</th>
-                                <th style="width: 15%">Code</th>
-                                <th colspan="2" class="text-center" style="width: 20%">Range</th>
+                                <th style="width: 20%">Code</th>
+                                <th style="width: 10%">Min</th>
                                 <th style="width: 15%">Money Discount</th>
                                 <th style="">Date Expired</th>
                                 <th style="width:  15%">Status</th>
@@ -120,8 +114,8 @@
                             <tfoot>
                             <tr>
                                 <th style="width: 10%">ID</th>
-                                <th style="width: 15%">Code</th>
-                                <th colspan="2" class="text-center" style="width: 20%">Range</th>
+                                <th style="width: 20%">Code</th>
+                                <th style="width: 10%">Min</th>
                                 <th style="width: 15%">Money Discount</th>
                                 <th style="">Date Expired</th>
                                 <th style="width:  15%">Status</th>
@@ -173,9 +167,6 @@
                         }, {
                             "targets": 6, // your case first column
                             "className": "text-center",
-                        }, {
-                            "targets": 7, // your case first column
-                            "className": "text-center",
                         },],
                     "columns": [
                         {"data": "id", render: $.fn.dataTable.render.text()},
@@ -187,7 +178,6 @@
                         },
 
                         {"data": "min", render: $.fn.dataTable.render.text()},
-                        {"data": "max", render: $.fn.dataTable.render.text()},
                         {
                             "data": "money_discount", render: function (d) {
                                 return d + '   <small class="label bg-red" style="font-size:10px">  <i class="fa  fa-arrow-down"></i></small>'
@@ -255,7 +245,6 @@
                     for (var i = 0; i < $('.number-promotion').val(); i++) {
                         var x = {
                             "min": $('.from-money').val(),
-                            "max": $('.to-money').val(),
                             "date_expired": $('.date-expired').val(),
                             "money_discount": $('.discount').val(),
                         }

@@ -67,7 +67,8 @@ class StockTransferInViewSet(ModelViewSet):
         return Response(serializer.data, status=HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
-        serializer.save(created_at=datetime.now())
+        if serializer.is_valid():
+            serializer.save(created_at=datetime.now())
 
 
 class StockTransferInDetailViewSet(ModelViewSet):

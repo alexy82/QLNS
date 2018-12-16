@@ -8,7 +8,7 @@ class CustomerType(models.Model):
     id = models.AutoField(primary_key=True)
     min = models.IntegerField(default=0, unique=True)
     max = models.IntegerField(default=0, unique=True)
-    type = models.CharField(max_length=64,unique=True)
+    type = models.CharField(max_length=64, unique=True)
     descriptions = models.CharField(max_length=256)
 
     class Meta:
@@ -29,7 +29,10 @@ class Customer(models.Model):
 
     @property
     def type(self):
-        return CustomerType.objects.filter(min__lte=self.point, max__gte=self.point)[0]
+        query = CustomerType.objects.filter(min__lte=self.point, max__gte=self.point)
+        if query.count() == 0:
+            return CustomerType(min=0, max=9999999999, type="No Define", descriptions="")
+        return query[0]
 
     class Meta:
         app_label = "QuanLyNhaSach"

@@ -21,7 +21,7 @@
     </style>
 {% endblock %}
 {% block section %}
-    <a href="{% url 'QuanLyNhaSach:stock-transfer-in' %}">Goods Delivery Note List</a>
+    <a href="{% url 'QuanLyNhaSach:stock-transfer-out' %}">Goods Receipt Note List</a>
     <i class="fa fa-fw  fa-angle-right"></i>
     {% if  note %}
         View
@@ -51,18 +51,19 @@
                                 <div class="col-lg-9">
                                     <div class="input-group col-md-12">
                                         <label>Merchandise</label>
-                                        <select class="form-control select2 js-example-basic-single"
+                                        <select id="merchandise-select"
+                                                class="form-control select2 js-example-basic-single"
                                                 data-placeholder="Select a State" style="width: 100%;" tabindex="-1"
                                                 aria-hidden="true">
                                             <optgroup label="Book">
                                                 {% for unit in books %}
-                                                    <option value="{{ unit.id }}-{{ unit.price }}-{{ unit.name }}-{{ unit.available_count }}">{{ unit.id }}.{{ unit.name }}
+                                                    <option value="{{ unit.id }}-{{ unit.price }}-{{ unit.available_count }}-{{ unit.name }}">{{ unit.id }}.{{ unit.name }}
                                                         - {{ unit.more_info }}</option>
                                                 {% endfor %}
                                             </optgroup>
                                             <optgroup label="Stationery">
                                                 {% for unit in stationeries %}
-                                                    <option value="{{ unit.id }}-{{ unit.price }}-{{ unit.name }}-{{ unit.available_count }}">{{ unit.id }}.{{ unit.name }}
+                                                    <option value="{{ unit.id }}-{{ unit.price }}-{{ unit.available_count }}-{{ unit.name }}">{{ unit.id }}.{{ unit.name }}
                                                         - {{ unit.more_info }}</option>
                                                 {% endfor %}
                                             </optgroup>
@@ -72,7 +73,7 @@
                                 <div class="col-lg-3">
                                     <div class="input-group col-md-12">
                                         <label>Count</label>
-                                        <input type="number" min="1" value="1" class="form-control count"
+                                        <input type="number" min="1" value="1" id="count" class="form-control count"
                                                placeholder="Number of unit">
                                     </div>
                                 </div>
@@ -144,17 +145,26 @@
                                        style="font-size: 13px"> {{ user.profile.display_name }}</small>
                             </a>
                             </li>
-                            <li class="list-group-item">
-                                <b>Total</b> <a class="pull-right"><span id="total-display" class="text-green text-bold"
-                                                                         style="font-size: 17px">0</span> VNĐ</a>
-                            </li>
-                            {% if note %}
+                            {% if not note %}
                                 <li class="list-group-item">
-                                    <b>Discount</b> <a class="pull-right"><span id="display-display"
-                                                                                class="text-green text-bold"
-                                                                                style="font-size: 17px">0</span> VNĐ</a>
+                                    <b>Total</b> <a class="pull-right"><span id="total-display"
+                                                                             class="text-green text-bold"
+                                                                             style="font-size: 17px">0</span> VNĐ</a>
                                 </li>
                             {% endif %}
+                            {% if note %}
+                                <li class="list-group-item">
+                                    <b>Promotion code</b> <a class="pull-right">
+                                    <small class="label bg-green"
+                                           style="font-size: 13px"> {{ note.promotion.code }}</small>
+                                </a>
+                                </li>
+                            {% endif %}
+                            <li class="list-group-item">
+                                <b>Discount</b> <a class="pull-right"><span id="discount-display"
+                                                                            class="text-green text-bold"
+                                                                            style="font-size: 17px">0</span> VNĐ</a>
+                            </li>
                             <li class="list-group-item">
                                 <b>Final Total</b> <a class="pull-right"><span id="ftotal-display"
                                                                                class="text-green text-bold"
@@ -166,7 +176,7 @@
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-user"></i></span>
 
-                                        <select id="supplier"
+                                        <select id="customer"
                                                 class="form-control type-select text-bold select2 js-example-basic-single"
                                                 style="font-size: 15px" required>
                                             {% for customer in customers %}
@@ -177,11 +187,13 @@
 
                                     </div>
                                     <label>Promotion code</label>
+                                    <small id="errormsg" class="text-red">Promotion code incorrect</small>
                                     <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-money"></i></span>
+                                        <span class="input-group-addon"><i class="fa fa-ticket"></i></span>
 
-                                        <input id="paid" name="paid" type="text" class="form-control"
-                                               placeholder="money" value="0">
+                                        <input id="promotion-code" name="promotion_code" type="text"
+                                               class="form-control"
+                                               placeholder="promotion code">
 
 
                                     </div>
@@ -223,18 +235,24 @@
     <script src="{% static "bower_components/datatables.net/js/jquery.dataTables.min.js" %}"></script>
     <script src="{% static "bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js" %}"></script>
     <script>
+
         {% if not note %}
+            var count = $("#merchandise-select").val().split('-')[2]
+            $('#count').val(1)
+            $('#count').prop('max', count);
+            $("#errormsg").hide()
             var select_item = {}
             var total_all = 0;
             var discount = 0;
+            var min = 0;
+            var id_promotion = -1;
 
             function render_row(raw_data, count) {
                 $('#body-bill').html("");
-
+                console.log(raw_data)
                 data = raw_data.split('-');
                 id = data[0];
-
-                unit_name = data[2];
+                var unit_name = data.slice(3).join("-")
                 price = data[1];
                 item = {id: id, name: unit_name, price: price, count: count}
                 if (select_item[id] == null) {
@@ -266,6 +284,11 @@
                         total = select_item[key].count * parseInt(select_item[key].price);
                         total_all += total
                     });
+                    if (total_all < min) {
+                        $('#promotion-code').val("")
+                        discount = 0
+                        $("#discount-display").html(discount.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+                    }
                     $("#total-display").html(total_all.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
                     ftotal = total_all - discount;
                     $('#ftotal-display').html(ftotal.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
@@ -273,7 +296,66 @@
             }
 
             $(document).ready(function () {
-                $('#promotion').on('input', function (e) {
+                $('.select2').select2();
+                $('#merchandise-select').change(function () {
+                    var count = $(this).val().split('-')[2]
+                    $('#count').val(1)
+                    $('#count').prop('max', count);
+
+                })
+                $("#count").keyup(function () {
+                    // Check correct, else revert back to old value.
+                    if (!$(this).val() || (parseInt($(this).val()) <= $(this).prop('max') && parseInt($(this).val()) >= $(this).prop('min')))
+                        ;
+                    else {
+                        $(this).val($(this).prop('max'));
+                    }
+                });
+                $('#promotion-code').focusout(function (e) {
+                    $.ajax({
+                        type: "GET",
+                        url: '/check/promotion/',
+                        data: {"promotion_code": $(this).val(), "total": total_all},
+                        headers: {
+                            "X-CSRFToken": "{{csrf_token}}"
+                        },
+                        success: function (data) {
+                            console.log(data.status)
+                            if (data.status == 0) {
+                                discount = 0
+                                min = 0
+                                $('#create').prop('disabled', false);
+                                $('#errormsg').hide()
+                            }
+                            else if (data.status == 1) {
+                                discount = 0
+                                min = 0
+                                $('#create').prop('disabled', true);
+                                $('#errormsg').show()
+                            }
+                            else {
+                                discount = data.value.discount;
+                                min = data.value.min;
+                                id_promotion = data.value.id;
+                                $('#create').prop('disabled', false);
+                                $('#errormsg').hide()
+                            }
+                            total_all = 0;
+                            Object.keys(select_item).forEach(function (key) {
+                                total = select_item[key].count * parseInt(select_item[key].price);
+                                total_all += total
+                            });
+                            $("#total-display").html(total_all.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+                            $("#discount-display").html(discount.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+                            ftotal = total_all - discount;
+                            $('#ftotal-display').html(ftotal.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+                        },
+                        error: function () {
+
+                        }
+
+
+                    });
                     value = $(this).val();
                     if (value == "")
                         value = 0
@@ -283,11 +365,11 @@
                 });
 
                 $('.add').click(function () {
-                    raw_str = $(".select2").val()
+                    var raw_str = $("#merchandise-select").val()
                     count = parseInt($('.count').val() == "" ? 1 : $('.count').val())
                     render_row(raw_str, count);
                 })
-                $('.select2').select2();
+
 
             });
             $('#create').click(function (e) {
@@ -305,17 +387,16 @@
 
                 $.ajax({
                     type: "POST",
-                    url: '/api/stocktransferins/',
+                    url: '/api/stocktransferouts/',
                     data: {
-                        "paid": paid,
-                        "supplier": $('#supplier').val()
+                        "customer": $('#customer').val(),
+                        "promotion": id_promotion == -1 ? null : id_promotion,
                     },
                     headers: {
                         "X-CSRFToken": "{{csrf_token}}"
                     },
                     success: function (data) {
                         var items = new Array();
-
                         Object.keys(select_item).forEach(function (key) {
                             var item = {
                                 "unit": key,
@@ -324,9 +405,10 @@
                             }
                             items.push(item)
                         });
+                        console.log("ok");
                         $.ajax({
                             type: "POST",
-                            url: '/api/stocktransferins-detail/',
+                            url: '/api/stocktransferouts-detail/',
                             data: {"items": JSON.stringify(items)},
                             headers: {
                                 "X-CSRFToken": "{{csrf_token}}"
@@ -341,7 +423,7 @@
 
                         });
 
-                        window.location.href = "{% url 'QuanLyNhaSach:stock-transfer-in-add' %}";
+                        window.location.href = "{% url 'QuanLyNhaSach:stock-transfer-out-add' %}";
 
                     },
                     error: function () {
@@ -360,8 +442,8 @@
 
             })
         {% else %}
-            var total_all = 0
-            var paid = {{ note.paid }}
+            var total_all = {{ note.total }};
+            var discount = "{{ note.promotion.money_discount }}"
             var select_item = {
                 {% for note_detail in note_details %}
 
@@ -375,16 +457,13 @@
             var stt = 1
             Object.keys(select_item).forEach(function (key) {
                 total = select_item[key].count * parseInt(select_item[key].price);
-                total_all += total
                 cls = stt % 2 == 0 ? 'even' : 'odd';
                 var template = `<tr id="${key}" role="row" class="${cls}"><td class="text-center">${stt}</td><td >${select_item[key].name}</td><td class="text-center">${select_item[key].price.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")}</td><td class="text-center">${select_item[key].count}</td><td class="text-center">${total.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")}</td></tr>`
                 $('#body-bill').append(template)
                 stt++;
             });
-            $("#total-display").html(total_all.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
-            dept = total_all - paid
-            $('#dept-display').html(dept.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
-            $('#paid-display').html(paid.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+            $("#discount-display").html(discount.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
+            $('#ftotal-display').html(total_all.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))
         {% endif%}
 
 

@@ -51,7 +51,8 @@
                                 <div class="col-lg-6">
                                     <div class="input-group col-md-12">
                                         <label>Merchandise</label>
-                                        <select class="form-control select2 js-example-basic-single"
+                                        <select id="merchandise-select"
+                                                class="form-control select2 js-example-basic-single"
                                                 data-placeholder="Select a State" style="width: 100%;" tabindex="-1"
                                                 aria-hidden="true">
                                             <optgroup label="Book">
@@ -239,8 +240,7 @@
 
                 data = raw_data.split('-');
                 id = data[0];
-
-                unit_name = data[2];
+                var unit_name = data.slice(2).join("-")
                 price = price;
                 item = {id: id, name: unit_name, price: price, count: count}
                 if (select_item[id] == null) {
@@ -283,6 +283,7 @@
             }
 
             $(document).ready(function () {
+                $('.select2').select2();
                 $('#paid').on('input', function (e) {
                     value = $(this).val();
                     if (value == "")
@@ -293,12 +294,12 @@
                 });
 
                 $('.add').click(function () {
-                    raw_str = $(".select2").val()
+                    raw_str = $("#merchandise-select").val()
                     count = parseInt($('.count').val() == "" ? 1 : $('.count').val())
                     price = parseInt($('.price').val() == "" ? 0 : $('.price').val())
                     render_row(raw_str, count, price);
                 })
-                $('.select2').select2();
+
 
             });
             $('#create').click(function (e) {

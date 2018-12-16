@@ -108,46 +108,84 @@
 
             {% if book %}
 
-                    <div class=" col-lg-6">
-                        <div class="box box-primary">
-                            <div class="box-header">
-                                <h3 class="box-title">History in</h3>
-                                <div class="box-tools pull-right">
-                                </div>
-
+                <div class=" col-lg-6">
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h3 class="box-title">History in</h3>
+                            <div class="box-tools pull-right">
                             </div>
 
-
-                            <div class="box-body">
-                                <table id="goods-in" class="table table-bordered table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th style="width: 35%">Date</th>
-                                        <th style="width: 20%">Count</th>
-                                        <th style="width: 25%">Supplier</th>
-                                        <th style="width: 20%">More</th>
-                                        <th hidden="hidden"></th>
-
-                                    </tr>
-                                    </thead>
-                                    <tbody id="data-table">
-                                    </tbody>
-                                    <tfoot>
-                                    <tr>
-                                        <th style="width: 30%">Date</th>
-                                        <th style="width: 15%">Count</th>
-                                        <th style="width: 30%">Supplier</th>
-                                        <th style="width: 25%">More</th>
-                                        <th hidden="hidden"></th>
+                        </div>
 
 
-                                    </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
+                        <div class="box-body">
+                            <table id="goods-in" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th style="width: 35%">Date</th>
+                                    <th style="width: 20%">Count</th>
+                                    <th style="width: 25%">Supplier</th>
+                                    <th style="width: 20%">More</th>
+                                    <th hidden="hidden"></th>
+
+                                </tr>
+                                </thead>
+                                <tbody id="data-table">
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th style="width: 30%">Date</th>
+                                    <th style="width: 15%">Count</th>
+                                    <th style="width: 30%">Supplier</th>
+                                    <th style="width: 25%">More</th>
+                                    <th hidden="hidden"></th>
+
+
+                                </tr>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
+                </div>
+                <div class=" col-lg-6">
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h3 class="box-title">History out</h3>
+                            <div class="box-tools pull-right">
+                            </div>
 
+                        </div>
+
+
+                        <div class="box-body">
+                            <table id="goods-out" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th style="width: 35%">Date</th>
+                                    <th style="width: 20%">Count</th>
+                                    <th style="width: 25%">Customer</th>
+                                    <th style="width: 20%">More</th>
+                                    <th hidden="hidden"></th>
+
+                                </tr>
+                                </thead>
+                                <tbody id="data-table">
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th style="width: 30%">Date</th>
+                                    <th style="width: 15%">Count</th>
+                                    <th style="width: 30%">Customer</th>
+                                    <th style="width: 25%">More</th>
+                                    <th hidden="hidden"></th>
+
+
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
 
             {% endif %}
@@ -270,6 +308,64 @@
                         },
                         {
                             "data": "supplier_id", render: function (data, type, row) {
+                                return ""
+                            }
+                        },
+
+
+                    ],
+                    "paging": true,
+                    "lengthChange": false,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": false,
+                    "dom": "lrtip",
+                    "pageLength": 10,
+                    "search": {
+                        "regex": true
+                    }
+                });
+                var dataset_out = [
+                    {% for note_out in note_out_list %}
+                        {
+                            'date': new Date("{{ note_out.inside.created_at|date:"Y-m-d H:i:s" }}"),
+                            'count':{{ note_out.count }},
+                            'customer': "{{ note_out.inside.customer.name }}",
+                            'inside_id': "{{ note_out.inside.id }}",
+                            'customer_id': "{{ note_out.inside.customer.id }}"
+
+                        },
+                    {% endfor %}
+                ]
+
+                let goods_out = $('#goods-out').DataTable({
+                    data: dataset_out,
+                    "order": [[0, 'desc']],
+                    "columns": [
+                        {
+                            "data": "date", render: function (d) {
+                                return '<small class="label bg-blue" style="font-size: 13px">' + moment(d).format("DD/MM/YYYY") + '</small> ' + moment(d).format("HH:mm:SS")
+                            }
+                        },
+                        {
+                            "data": "count", render: function (data, type, row) {
+                                return '<i class="fa fa-arrow-down text-red" style="font-size: 13px" ></i> ' + '<small class="label bg-red" style="font-size: 13px">' + data + '</small>'
+                            }
+                        },
+
+
+                        {
+                            "data": "customer", render: function (data, type, row) {
+                                return '<a href="/suppliers/' + row['customer_id'] + '/">' + data + '</a>'
+                            }
+                        },
+                        {
+                            "data": "inside_id", render: function (data, type, row) {
+                                return '<a class="btn btn-info" href="/receipt-note/' + data + '/">View Detail</a>'
+                            }
+                        },
+                        {
+                            "data": "customer_id", render: function (data, type, row) {
                                 return ""
                             }
                         },

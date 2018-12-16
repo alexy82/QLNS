@@ -94,6 +94,9 @@ class StockTransferOutDetailViewSet(ModelViewSet):
             price = unit.price
             unit.available_count -= item['count']
             unit.save()
+            customer = StockTransferOut.objects.get(pk=item['inside']).customer
+            customer.point += (unit.price * int(item['count'])) // 10000
+            customer.save()
             item['price'] = price
 
         many = isinstance(data, list)

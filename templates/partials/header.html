@@ -1,7 +1,7 @@
 {% load static %}
 <header class="main-header">
     <!-- Logo -->
-    <a href="#" class="logo" style="position: fixed;">
+    <a href="{% url 'QuanLyNhaSach:index' %}" class="logo" style="position: fixed;">
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <span class="logo-mini">BSM</span>
         <!-- logo for regular state and mobile devices -->
@@ -35,7 +35,7 @@
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                <a href="{% url 'QuanLyNhaSach:profile' %}" class="btn btn-default btn-flat">Profile</a>
                             </div>
                             <div class="pull-right">
                                 <a href="{% url 'QuanLyNhaSach:logout' %}" class="btn btn-default btn-flat">Sign out</a>

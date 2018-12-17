@@ -92,11 +92,6 @@
                         {% with 100 as hundred %}
                             <div class="progress-group">
                                 <a href="
-
-
-
-
-
                                         {% if item.unit__merchandise_type == 0 %}{% url 'QuanLyNhaSach:stationeries-update' id=item.unit__id %}{% else %}{% url 'QuanLyNhaSach:books-update' id=item.unit__id %}{% endif %}"
                                    class="progress-text font-light text-red"
                                    style="font-size: 14px">{{ item.unit__name }}</a>

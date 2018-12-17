@@ -94,15 +94,17 @@
                                 <a href="
 
 
+
                                         {% if item.unit__merchandise_type == 0 %}{% url 'QuanLyNhaSach:stationeries-update' id=item.unit__id %}{% else %}{% url 'QuanLyNhaSach:books-update' id=item.unit__id %}{% endif %}"
-                                   class="progress-text font-light text-red" style="font-size: 14px">{{ item.unit__name }}</a>
+                                   class="progress-text font-light text-red"
+                                   style="font-size: 14px">{{ item.unit__name }}</a>
                                 <span class="progress-number"><b>{% widthratio item.total hundred 1 %}</b>/{{ count_outbound }}</span>
 
                                 <div class="progress sm" style="margin-top: 2px;height: 18px">
                                     <div class="progress-bar progress-bar-red"
 
                                          style=" background: rgb(32,200,210);
-                                                 background: linear-gradient(90deg, rgba(32,200,210,0.4990371148459384) 0%, rgba(120,212,152,0.9304096638655462) 25%, rgba(251,195,109,1) 54%, rgba(250,157,228,0.958420868347339) 75%);width: {% widthratio item.total count_outbound 1 %}%"></div>
+                                                 background: linear-gradient(189deg, rgba(32,200,210,0.4990371148459384) 0%, rgba(120,212,152,0.9304096638655462) 25%, rgba(251,195,109,1) 54%, rgba(250,157,228,0.958420868347339) 75%);width: {% widthratio item.total count_outbound 1 %}%"></div>
 
                                 </div>
                             </div>

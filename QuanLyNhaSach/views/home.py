@@ -54,11 +54,10 @@ def get_data_chart_money_7days_ago():
 
 
 def get_top_best_seller():
-    total = get_total_outbound_7days_ago()
     query = StockTransferOutDetail.objects.filter(
         inside__created_at__gte=(datetime.now() - timedelta(days=7))).values('unit__name', 'unit__id',
                                                                              'unit__merchandise_type').annotate(
-        total=Sum('count') * 100)
+        total=Sum('count') * 100).order_by('-total')
     length = query.count()
     if length < 10:
         return query[0:]

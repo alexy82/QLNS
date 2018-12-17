@@ -96,6 +96,7 @@
 
 
 
+
                                         {% if item.unit__merchandise_type == 0 %}{% url 'QuanLyNhaSach:stationeries-update' id=item.unit__id %}{% else %}{% url 'QuanLyNhaSach:books-update' id=item.unit__id %}{% endif %}"
                                    class="progress-text font-light text-red"
                                    style="font-size: 14px">{{ item.unit__name }}</a>
@@ -104,8 +105,10 @@
                                 <div class="progress sm" style="margin-top: 2px;height: 18px">
                                     <div class="progress-bar progress-bar-red"
 
-                                         style="background: rgb(131,58,180);
-                                                 background: linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%);width: {% widthratio item.total count_outbound 1 %}%"></div>
+                                         style="background: #11998e;  /* fallback for old browsers */
+                                                 background: -webkit-linear-gradient(to right, #38ef7d, #11998e);  /* Chrome 10-25, Safari 5.1-6 */
+                                                 background: linear-gradient(to right, #38ef7d, #11998e); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+                                                 width: {% widthratio item.total count_outbound 1 %}%"></div>
 
                                 </div>
                             </div>

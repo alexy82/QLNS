@@ -5,8 +5,15 @@ from QuanLyNhaSach.views import customer
 from QuanLyNhaSach.views import merchandise, supplier, promotion, stock_transfer_out, stock_transfer_in, user, group, \
     home
 from api.views import check_promotion
+from QuanLyNhaSach.views.base import BaseITSAdminView
 
 app_name = 'QuanLyNhaSach'
+
+
+class ErrorView(BaseITSAdminView):
+    def __init__(self):
+        super(ErrorView, self).__init__()
+        self.template_name = 'pages/error.html'
 
 
 def logout_view(request):
@@ -17,7 +24,7 @@ def logout_view(request):
 urlpatterns = [
     path('', home.Home.as_view(), name='index'),
     path('logout/', logout_view, name='logout'),
-
+    path('error/', ErrorView.as_view(), name='error'),
     path('customers/', customer.CustomerListView.as_view(), name='customers'),
     path('customers/add/', customer.CustomerAddView.as_view(), name='customers-add'),
     path('customers/<int:id>/', customer.CustomerUpdateView.as_view(), name='customers-update'),

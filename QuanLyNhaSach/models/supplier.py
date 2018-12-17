@@ -14,5 +14,11 @@ class Supplier(models.Model):
     email = models.EmailField(blank=True)
     address = models.CharField(blank=True, max_length=255)
 
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.__str__()
+
     class Meta:
         app_label = "QuanLyNhaSach"

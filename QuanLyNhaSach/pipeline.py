@@ -3,6 +3,8 @@ from QuanLyNhaSach.models.user_profile import Profile
 
 def get_avatar(backend, strategy, details, response,
                user=None, *args, **kwargs):
+    if user is None:
+        return
     url = None
     display_name = ""
     if backend.name == 'google-oauth2':

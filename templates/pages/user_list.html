@@ -121,12 +121,12 @@
                     {"data": "last_name", render: $.fn.dataTable.render.text()},
                     {
                         "data": "last_login", render: function (d) {
-                            return moment(d).format("YYYY-MM-DD HH:MM:SS");
+                            return moment(d).format("YYYY-MM-DD HH:mm:ss");
                         }
                     },
                     {
                         "data": "date_joined", render: function (d) {
-                            return moment(d).format("YYYY-MM-DD HH:MM:SS");
+                            return moment(d).format("YYYY-MM-DD HH:mm:ss");
                         }
                     },
                     {

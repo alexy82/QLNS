@@ -11,6 +11,12 @@ class CustomerType(models.Model):
     type = models.CharField(max_length=64, unique=True)
     descriptions = models.CharField(max_length=256)
 
+    def __str__(self):
+        return self.type
+
+    def __repr__(self):
+        return self.__str__()
+
     class Meta:
         app_label = "QuanLyNhaSach"
 
@@ -26,6 +32,12 @@ class Customer(models.Model):
     phone = models.CharField(max_length=10, blank=True)
     email = models.EmailField(blank=True)
     address = models.CharField(blank=True, max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.__str__()
 
     @property
     def type(self):

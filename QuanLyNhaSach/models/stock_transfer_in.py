@@ -14,6 +14,12 @@ class StockTransferIn(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, related_name='stock_transfer_in_list')
     paid = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.id
+
+    def __repr__(self):
+        return self.__str__()
+
     @property
     def total(self):
         return sum(int(i.amount) for i in self.list_detail.all())

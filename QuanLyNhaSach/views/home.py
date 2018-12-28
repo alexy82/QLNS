@@ -8,31 +8,31 @@ from QuanLyNhaSach.models.customer import Customer
 
 def get_total_inbound_7days_ago():
     query = StockTransferIn.objects.filter(
-        created_by__date_joined__gte=(datetime.now() - timedelta(days=7)))
+        created_at__gte=(datetime.now() - timedelta(days=7)))
     result = sum([sum([detail.count for detail in item.list_detail.all()]) for item in query])
     return result
 
 
 def get_total_outbound_7days_ago():
     query = StockTransferOut.objects.filter(
-        created_by__date_joined__gte=(datetime.now() - timedelta(days=7)))
+        created_at__gte=(datetime.now() - timedelta(days=7)))
     result = sum([sum([detail.count for detail in item.list_detail.all()]) for item in query])
     return result
 
 
 def get_total_bill_7days_ago():
-    return StockTransferOut.objects.filter(created_by__date_joined__gte=(datetime.now() - timedelta(days=7))).count()
+    return StockTransferOut.objects.filter(created_at__gte=(datetime.now() - timedelta(days=7))).count()
 
 
 def get_total_income_7days_ago():
-    query = StockTransferOut.objects.filter(created_by__date_joined__gte=(datetime.now() - timedelta(days=7)))
+    query = StockTransferOut.objects.filter(created_at__gte=(datetime.now() - timedelta(days=7)))
     result = 0
     result += sum([item.total for item in query])
     return result
 
 
 def get_data_chart_bill_7days_ago():
-    query = StockTransferOut.objects.filter(created_by__date_joined__gte=(datetime.now() - timedelta(days=7)))
+    query = StockTransferOut.objects.filter(created_at__gte=(datetime.now() - timedelta(days=7)))
     date_set = ([datetime.strftime(datetime.now() - timedelta(days=item), '%d-%m-%Y') for item in range(0, 7)])
     dict_data = {}
     for date in date_set:
@@ -43,7 +43,7 @@ def get_data_chart_bill_7days_ago():
 
 
 def get_data_chart_money_7days_ago():
-    query = StockTransferOut.objects.filter(created_by__date_joined__gte=(datetime.now() - timedelta(days=7)))
+    query = StockTransferOut.objects.filter(created_at__gte=(datetime.now() - timedelta(days=7)))
     date_set = ([datetime.strftime(datetime.now() - timedelta(days=item), '%d-%m-%Y') for item in range(0, 7)])
     dict_data = {}
     for date in date_set:

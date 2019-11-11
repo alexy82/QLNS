@@ -33,7 +33,7 @@ class Customer(models.Model):
     phone = models.CharField(max_length=10, blank=True)
     email = models.EmailField(blank=True)
     address = models.CharField(blank=True, max_length=255)
-    user = models.OneToOneField(User, related_name='extend_info', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='extend_info', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name

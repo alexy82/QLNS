@@ -1,9 +1,14 @@
+import json
+
 from django.shortcuts import render
 from django.core.exceptions import PermissionDenied
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
 from rest_framework.permissions import BasePermission
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from QLNS.middleware import get_current_user
 
 
@@ -75,3 +80,35 @@ class BaseCheckPermission(BasePermission):
         if not request.user.has_perm(self.label.format(self.permissions_allow[request.method])):
             return False
         return True
+
+
+class BaseAPIView(APIView):
+    charset = 'utf-8'
+    content_type = 'application/json'
+    default_response = {}
+    headers = {
+        'charset': charset,
+    }
+
+    def response(self, http_status_code=200, data=None, headers=None):
+        if data is None:
+            data = json.dumps(self.default_response)
+        if headers is None:
+            headers = self.headers
+        return Response(data, content_type=self.content_type, headers=headers, status=http_status_code)
+
+# class TestAPIView(BaseAPIView):
+#     charset = 'utf-8'
+#     content_type = 'application/json'
+#     default_response = {}
+#     headers = {
+#         'charset': charset,
+#     }
+#
+#     def get(self, request):
+#         self.checksign(request)
+#         return Response({'data': 'Yes!'}, content_type='application/json')
+#
+#     def post(self, request):
+#         self.checksign(request)
+#         return Response({'data': 'Yes!'}, content_type='application/json')

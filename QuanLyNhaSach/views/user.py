@@ -80,7 +80,7 @@ class UserAddView(BaseITSAdminView):
             messages.warning(request, 'Your email was exist please use another')
             return redirect('QuanLyNhaSach:users_add')
 
-        user = User(username=email, email=email, first_name=first_name if first_name != "" else "Guess",
+        user = User(username=email, email=email, first_name=first_name,
                     last_name=last_name)
         user.save()
         user.username = user.id

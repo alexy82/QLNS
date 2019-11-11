@@ -1,9 +1,11 @@
 from django.shortcuts import reverse, get_object_or_404, render
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from QuanLyNhaSach.serializers.customer import CustomerTypeSerializer, CustomerSerializer
 from QuanLyNhaSach.models.customer import Customer, CustomerType
-from QuanLyNhaSach.views.base import BaseITSAdminView
+from QuanLyNhaSach.views.base import BaseITSAdminView, BaseAPIView
 from QuanLyNhaSach.models.stock_transfer_out import StockTransferOut
+from django.contrib.auth import authenticate
 
 
 class CustomerListView(BaseITSAdminView):
@@ -61,6 +63,31 @@ class CustomerTypeListView(BaseITSAdminView):
     def __init__(self):
         super(CustomerTypeListView, self).__init__()
         self.template_name = 'pages/customer_type_list.html'
+
+
+class BrandListAPIView(BaseAPIView):
+    """
+    Check in stock of products by products SKU
+    """
+    http_method_names = ['post']
+
+    def post(self, request):
+        data = request.data
+        username = data.get('username', None)
+        password = data.get('password', None)
+        user = authenticate(username=username, password=password)
+        if user is None:
+            return Response({"Invalid username or password"}, status=404)
+        customer = Customer.objects.filter(user_id=user.id).first()
+        if customer is None:
+            return Response({"Invalid username or password"}, status=404)
+        response = {
+            'data': customer.as_dict(),
+        }
+        headers = {
+            'charset': self.charset,
+        }
+        return Response(response, content_type=self.content_type, headers=headers)
 
 
 class CustomerViewSet(ModelViewSet):

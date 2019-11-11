@@ -65,7 +65,7 @@ class CustomerTypeListView(BaseITSAdminView):
         self.template_name = 'pages/customer_type_list.html'
 
 
-class BrandListAPIView(BaseAPIView):
+class Auth(BaseAPIView):
     """
     Check in stock of products by products SKU
     """

@@ -53,7 +53,6 @@ class Customer(models.Model):
             "phone": self.phone,
             "email": self.email,
             "address": self.address,
-            "type": self.type,
             "username": username,
 
         }

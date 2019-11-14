@@ -38,10 +38,11 @@ class Merchandise(models.Model):
     price = models.IntegerField(default=0, validators=[
         MinValueValidator(0)
     ])
+    picture = models.CharField(max_length=512, default="")
     name = models.CharField(blank=False, max_length=128, null=False)
     type = models.ForeignKey(MerchandiseType, on_delete=models.CASCADE)
     available_count = models.IntegerField(default=0)
-    more_info = models.CharField(max_length=256, blank=True)
+    more_info = models.TextField(blank=True)
 
     def __str__(self):
         return self.name

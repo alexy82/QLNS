@@ -6,6 +6,7 @@ from QuanLyNhaSach.models.customer import Customer, CustomerType
 from QuanLyNhaSach.views.base import BaseITSAdminView, BaseAPIView
 from QuanLyNhaSach.models.stock_transfer_out import StockTransferOut
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 
 
 class CustomerListView(BaseITSAdminView):
@@ -81,6 +82,31 @@ class Auth(BaseAPIView):
         customer = Customer.objects.filter(user_id=user.id).first()
         if customer is None:
             return Response({"Invalid username or password"}, status=404)
+        response = {
+            'data': customer.as_dict(),
+        }
+        headers = {
+            'charset': self.charset,
+        }
+        return Response(response, content_type=self.content_type, headers=headers)
+
+
+class Customers(BaseAPIView):
+    http_method_names = ['post']
+
+    def post(self, request):
+        data = request.data
+        username = data.get('username', None)
+        password = data.get('password', None)
+        name = data.get('name', None)
+        phone = data.get('phone', None)
+        email = data.get('email', "")
+        address = data.get('address', "")
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            return Response({"username is existed"}, status=409)
+        user = User.objects.create_user(username=username, password=password)
+        customer = Customer.objects.create(name=name, phone=phone, email=email, address=address, user_id=user.id)
         response = {
             'data': customer.as_dict(),
         }

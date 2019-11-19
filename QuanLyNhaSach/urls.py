@@ -73,5 +73,6 @@ urlpatterns = [
     path('users/add/', user.UserAddView.as_view(), name='users_add'),
 
     path('check/promotion/', check_promotion, name='promotions_check'),
-    path('api/auth', customer.Auth.as_view(), name='auth')
+    path('api/auth', customer.Auth.as_view(), name='auth'),
+    path('api/customer-api', customer.Customers.as_view(), name='customer-api')
 ]

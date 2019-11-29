@@ -13,6 +13,8 @@ class StockTransferOut(models.Model):
     created_at = models.DateTimeField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='stock_transfer_out_list')
     status = models.CharField(max_length=50)
+    address = models.CharField(max_length=300)
+    channel = models.CharField(max_length=50)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='stock_transfer_out_list')
     promotion = models.ForeignKey(Promotion, on_delete=models.CASCADE, related_name='stock_transfer_out_list',
                                   null=True, blank=True)

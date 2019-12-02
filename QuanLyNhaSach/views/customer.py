@@ -5,8 +5,11 @@ from QuanLyNhaSach.serializers.customer import CustomerTypeSerializer, CustomerS
 from QuanLyNhaSach.models.customer import Customer, CustomerType
 from QuanLyNhaSach.views.base import BaseITSAdminView, BaseAPIView
 from QuanLyNhaSach.models.stock_transfer_out import StockTransferOut
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 
 class CustomerListView(BaseITSAdminView):
@@ -66,12 +69,13 @@ class CustomerTypeListView(BaseITSAdminView):
         self.template_name = 'pages/customer_type_list.html'
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class Auth(BaseAPIView):
     """
     Check in stock of products by products SKU
     """
     http_method_names = ['post']
-
+    @csrf_exempt
     def post(self, request):
         data = request.data
         username = data.get('username', None)
@@ -79,6 +83,8 @@ class Auth(BaseAPIView):
         user = authenticate(username=username, password=password)
         if user is None:
             return Response({"Invalid username or password"}, status=404)
+        else:
+            login(request, user)
         customer = Customer.objects.filter(user_id=user.id).first()
         if customer is None:
             return Response({"Invalid username or password"}, status=404)

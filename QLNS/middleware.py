@@ -31,3 +31,12 @@ class ThreadLocalMiddleware(MiddlewareMixin):
         if hasattr(_thread_locals, 'request'):
             del _thread_locals.request
             return response
+
+
+from rest_framework.authentication import SessionAuthentication
+
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+
+    def enforce_csrf(self, request):
+        return  # it will not perform any csrf check

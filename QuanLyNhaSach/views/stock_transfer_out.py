@@ -65,10 +65,11 @@ class StockTransferOutViewSet(ModelViewSet):
     serializer_class = StockTransferOutSerializer
 
     def create(self, request, *args, **kwargs):
-        data = request.POST.dict()
+        data = request.data
         data['created_by'] = get_current_user().id
-        if data['promotion'] != '':
-            promotion = Promotion.objects.get(pk=data['promotion'])
+        __promotion = data.get('promotion','')
+        if __promotion != '':
+            promotion = Promotion.objects.get(pk=__promotion)
             promotion.is_used = True
             promotion.save()
         serializer = self.get_serializer(data=data)
@@ -86,8 +87,7 @@ class StockTransferOutDetailViewSet(ModelViewSet):
     serializer_class = StockTransferOutDetailSerializer
 
     def create(self, request, *args, **kwargs):
-        data = request.POST.get("items")
-        data = json.loads(data)
+        data = request.data.get("items")
         for item in data:
             id_unit = item['unit']
             unit = Merchandise.objects.get(pk=id_unit)

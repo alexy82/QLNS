@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from QLNS.middleware import get_current_user
 
 
+
 class BaseITSAdminView(View):
     """
     Base View ITS admin

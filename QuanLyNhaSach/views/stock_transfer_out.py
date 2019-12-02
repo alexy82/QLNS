@@ -66,7 +66,6 @@ class StockTransferOutViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data
-        data['created_by'] = get_current_user().id
         __promotion = data.get('promotion','')
         if __promotion != '':
             promotion = Promotion.objects.get(pk=__promotion)

@@ -47,6 +47,7 @@ class Customer(models.Model):
         if self.user is not None:
             username = self.user.username
         return {
+            "user_id": self.user_id,
             "id": self.id,
             "name": self.name,
             "point": self.point,
